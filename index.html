@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="cordova.js"></script>
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <style type="text/css">
+      .platform-ios .manual-ios-statusbar-padding{
+        padding-top:20px;
+      }
+      .manual-remove-top-padding{
+        padding-top:0px; 
+      }
+      .manual-remove-top-padding .scroll{
+        padding-top:0px !important;
+      }
+      ion-list.manual-list-fullwidth div.list, .list.card.manual-card-fullwidth {
+        margin-left:-10px;
+        margin-right:-10px;
+      }
+      ion-list.manual-list-fullwidth div.list > .item, .list.card.manual-card-fullwidth > .item {
+        border-radius:0px;
+        border-left:0px;
+        border-right: 0px;
+      }
+      .show-list-numbers-and-dots ul{
+        list-style-type: disc;
+        padding-left:40px;
+      }
+      .show-list-numbers-and-dots ol{
+        list-style-type: decimal;
+        padding-left:40px;
+      }
+    </style>
+	
+	<script src="lib/aws/aws-sdk-2.4.9.min.js"></script>
+    <script src="lib/aws/aws-cognito-sdk.min.js "></script>
+    <script src="lib/aws/amazon-cognito.min.js"></script>
+    <script src="lib/aws/amazon-cognito-identity.min.js"></script>
+	<script src="js/factories/awsCognitoIdentity.factory.js"></script>
+	<script src="lib/angular/angular-messages.min.js"></script>
+	<script src="lib/aws/dependencies/sjcl.js"></script>
+    <script src="lib/aws/dependencies/moment.min.js"></script>
+    <script src="lib/aws/dependencies/jsbn.js"></script>
+    <script src="lib/aws/dependencies/jsbn2.js"></script>
+	<script src="js/app.js"></script>
+    <script src="js/controllers.js"></script>
+    <script src="js/routes.js"></script>
+    <script src="js/directives.js"></script>
+    <script src="js/services.js"></script>
+	
+  </head>
+  
+  <body ng-app="app" animation="slide-left-right-ios7">
+	<div>
+		<div>
+			<ion-nav-bar class="bar-stable">
+				<ion-nav-back-button></ion-nav-back-button>
+			</ion-nav-bar>
+			<ion-nav-view></ion-nav-view>
+		</div>
+	</div>
+  </body>
+</html>

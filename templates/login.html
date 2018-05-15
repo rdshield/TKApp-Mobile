@@ -1,0 +1,29 @@
+<ion-view title="Login" hide-nav-bar="true" id="page8">
+  <ion-content padding="true" class="manual-ios-statusbar-padding">
+    <div class="spacer" style="width: 300px; height: 9%;"></div>
+    <div>
+      <img src="img/Ryx8MrADTYamb3MRyVrp_tk_logo.jpg" style="display: block; width: 100%; height: auto; margin-left: auto; margin-right: auto;">
+    </div>
+    <div class="spacer" style="width: 300px; height: 9%;"></div>
+
+    <form id="login-form1" class="list" ng-submit="signIn(login)" >
+      <ion-list id="login-list1">
+        <label class="item item-input" id="login-input1">
+          <span class="input-label">Email</span>
+          <input type="email" placeholder="" ng-model="user.email">
+        </label>
+        <label class="item item-input" id="login-input2">
+          <span class="input-label">Password</span>
+          <input type="password" placeholder="" ng-model="user.password">
+        </label>
+        <ion-checkbox id="login-checkbox1">Remember my Login</ion-checkbox>
+      </ion-list>
+	  	<div class="error" ng-show="error.message">
+          {{ error.message }}
+		</div>
+      <button type=submit id="login-button2" class="button button-positive button-block" >Login</button>
+      <a ui-sref="createANewAccount()" id="login-button3" class="button button-positive button-block button-outline">Create a New Account</a>
+      <button id="login-button19" class="button button-positive button-small button-block button-clear">Confirm an Account</button>
+    </form>
+  </ion-content>
+</ion-view>
