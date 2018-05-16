@@ -36,7 +36,10 @@ angular.module('app.routes', [])
         templateUrl: 'templates/badges.html',
         controller: 'badgesCtrl'
       }
-    }
+    },
+	params: {
+		'email': "",
+	}
   })
 
   .state('tabsController', {
@@ -54,7 +57,10 @@ angular.module('app.routes', [])
   .state('login', {
     url: '/Login',
     templateUrl: 'templates/login.html',
-    controller: 'loginCtrl'
+    controller: 'loginCtrl',
+	params: {
+		userEmail: "''"		
+	},
   })
 
   .state('tabsController.missionBriefing', {
@@ -89,7 +95,10 @@ angular.module('app.routes', [])
 	cache: false,
     url: '/page12',
     templateUrl: 'templates/accountConfirmation.html',
-    controller: 'accountConfirmationCtrl'
+    controller: 'accountConfirmationCtrl',
+	params: {
+		userEmail: "''"		
+	},
   })
 
 

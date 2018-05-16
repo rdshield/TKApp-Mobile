@@ -83,11 +83,13 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
             errorHandler(err);
             return false;
           }
-
+			
+		  info = { 'email': $scope.user.email };
           //$scope.$apply();
-
-          $scope.user = {}; //clear register form
-          $state.go('accountConfirmation',{email: $scope.user.email});
+		  $scope.user = {}; //clear register form
+		  
+		  console.log(info);
+          $state.go('accountConfirmation', info);
         });
       return true;
     }
@@ -103,8 +105,8 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
-	console.log($stateParams);
 	console.log($scope);
+	$scope.user.email = $stateParams.email;
 }])
 .controller('select_ChildCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
