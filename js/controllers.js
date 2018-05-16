@@ -1,9 +1,9 @@
 angular.module('app.controllers', ['aws.cognito.identity'])
 
-.controller('loginCtrl', ['$scope', '$stateParams', 'awsCognitoIdentityFactory', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('loginCtrl', ['$scope','$state', '$stateParams', 'awsCognitoIdentityFactory', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, awsCognitoIdentityFactory) {
+function ($scope, $state, $stateParams, awsCognitoIdentityFactory) {
     $scope.user = { email: "", password: "" };
     $scope.error = { message: null };
 
@@ -43,6 +43,7 @@ function ($scope, $stateParams, awsCognitoIdentityFactory) {
 			}
 			clearForm(login)
 			console.log("Login Successful");
+			$state.go('select_Child', {}, {reoload:true});
 			})
 		}
     }
@@ -57,6 +58,14 @@ function ($scope, $stateParams, awsCognitoIdentityFactory) {
       $scope.user = { email: '', password: '' }
 
     }
+}])
+ 
+.controller('select_ChildCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+// You can include any angular dependencies as parameters for this function
+// TIP: Access Route Parameters for your page via $stateParams.parameterName
+function ($scope, $stateParams) {
+
+
 }])
  
 .controller('missionsCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
@@ -99,13 +108,7 @@ function ($scope, $stateParams) {
 
 }])
    
-.controller('select_ChildCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams) {
 
-
-}])
    
 .controller('challenge_SubmittedCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
