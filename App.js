@@ -9,6 +9,7 @@ export default class App extends React.Component {
         <Text>Changes you make will automatically reload.</Text>
         <Text>Shake your phone to open the developer menu.</Text>
         <Text>This was added by me, Byron Padilla.</Text>
+        <Text>This was added by me, Byron Padilla.</Text>
       </View>
     );
   }
