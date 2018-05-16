@@ -88,7 +88,10 @@ angular.module('app.routes', [])
   .state('createANewAccount', {
     url: '/page15',
     templateUrl: 'templates/createANewAccount.html',
-    controller: 'createANewAccountCtrl'
+    controller: 'createANewAccountCtrl',
+	params: {
+		userEmail: "''"		
+	},
   })
   
    .state('accountConfirmation', {

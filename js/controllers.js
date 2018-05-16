@@ -47,6 +47,11 @@ function ($scope, $state, $stateParams, awsCognitoIdentityFactory) {
 		}
     }
 	
+	$scope.goToConfirm = function(){
+		$state.go('accountConfirmation',{ 'email': ""});
+		clearForm(login);
+	}
+	
 	$scope.userLogged = function() {
       if(awsCognitoIdentityFactory.ifUserLogged) {
         $stateParams.go('select_Child', {}, {reload: true});
@@ -55,7 +60,6 @@ function ($scope, $state, $stateParams, awsCognitoIdentityFactory) {
 
     var clearForm = function(login) {
       $scope.user = { email: '', password: '' }
-
     }
 }])
  
