@@ -13,12 +13,11 @@ function ($scope, $state, $stateParams, awsCognitoIdentityFactory) {
           $scope.error.message = err.message;
           return false;
         }
-        if(isValid) $state.go('select_Child', {}, {reoload: true})
+        if(isValid) $state.go('select_Child', {}, {reload: true})
       });
     }
 	
 	$scope.signIn = function(login) {
-		//console.log($stateParams);
 		$scope.user.email = $scope.user.email.toLowerCase();
 		if($scope.user.email == "" || $scope.user.password == "")
 		{
@@ -43,7 +42,7 @@ function ($scope, $state, $stateParams, awsCognitoIdentityFactory) {
 			}
 			clearForm(login)
 			console.log("Login Successful");
-			$state.go('select_Child', {}, {reoload:true});
+			$state.go('select_Child', {}, {reload:true});
 			})
 		}
     }
@@ -64,7 +63,6 @@ function ($scope, $state, $stateParams, awsCognitoIdentityFactory) {
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams) {
-
 
 }])
  
