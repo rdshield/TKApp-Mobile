@@ -1,4 +1,4 @@
-angular.module('app.controllers', ['aws.cognito.identity'])
+angular.module('app.controllers', ['aws.cognito.identity', 'ngMessages'])
 
 .controller('loginCtrl', ['$scope','$state', '$stateParams', 'awsCognitoIdentityFactory', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
@@ -59,6 +59,53 @@ function ($scope, $state, $stateParams, awsCognitoIdentityFactory) {
     }
 }])
  
+.controller('createANewAccountCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+// You can include any angular dependencies as parameters for this function
+// TIP: Access Route Parameters for your page via $stateParams.parameterName
+function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
+	$scope.user = {};
+
+    $scope.error = {
+		message: null
+    };
+
+	$scope.register = function() {
+	  if ($scope.user.pass1 !== $scope.user.pass2) {
+			//errorHandler('The passwords entered do not match');
+			$scope.error.message = 'The passwords entered do not match';
+			$scope.$apply();
+			return false;
+	  }		
+	  $scope.user.email = $scope.user.email.toLowerCase();	  
+      awsCognitoIdentityFactory.signUp($scope.user.email, $scope.user.email, $scope.user.pass1,
+        function(err, result) {
+          if(err) {
+            errorHandler(err);
+            return false;
+          }
+
+          //$scope.$apply();
+
+          $scope.user = {}; //clear register form
+          $state.go('accountConfirmation',{email: $scope.user.email});
+        });
+      return true;
+    }
+
+    errorHandler = function(err) {
+      console.log(err);
+      $scope.error.message = err.message;
+      $scope.$apply();
+    }
+}])
+
+.controller('accountConfirmationCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+// You can include any angular dependencies as parameters for this function
+// TIP: Access Route Parameters for your page via $stateParams.parameterName
+function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
+	console.log($stateParams);
+	console.log($scope);
+}])
 .controller('select_ChildCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
@@ -116,11 +163,5 @@ function ($scope, $stateParams) {
 
 }])
    
-.controller('createANewAccountCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams) {
 
-
-}])
  

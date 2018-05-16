@@ -1,61 +1,60 @@
 <ion-view title="Create a New Account" id="page15">
   <ion-content padding="true" class="has-header">
-    <form id="createANewAccount-form4" class="list">
-      <ion-item class="item-divider" id="createANewAccount-list-item-divider1"> Account Information</ion-item>
+    <form id="createANewAccount-form4" ng-submit="register()" novalidate>
+	  <ion-item class="item-divider" id="createANewAccount-list-item-divider1"> Account Information</ion-item>
       <label class="item item-input" id="createANewAccount-input4">
         <span class="input-label">Email</span>
-        <input type="email" placeholder="Enter your Email Address">
+        <input type="email" placeholder="Enter your Email Address" ng-model="user.email">
       </label>
-      <label class="item item-input" id="createANewAccount-input5" name="password1">
+      <label class="item item-input" id="createANewAccount-input5" name="password1" >
         <span class="input-label">Password</span>
-        <input type="password" placeholder="Enter a Password">
+        <input type="password" placeholder="Enter a Password" ng-model="user.pass1">
       </label>
-      <label class="item item-input" id="createANewAccount-input8" name="password2">
+      <label class="item item-input" id="createANewAccount-input8" name="password2" ng-model="user.pass2">
         <span class="input-label"> </span>
-        <input type="password" placeholder="Repeat your Password">
+        <input type="password" placeholder="Repeat your Password" ng-model="user.pass2">
       </label>
-    </form>
-    <ion-list id="createANewAccount-list7">
-      <ion-item class="item-divider" id="createANewAccount-list-item-divider2"> About You</ion-item>
-    </ion-list>
-    <form id="createANewAccount-form5" class="list">
-      <label class="item item-input" id="createANewAccount-input3" name="userFName">
-        <span class="input-label">First Name</span>
-        <input type="text" placeholder="Enter your First Name">
-      </label>
-      <label class="item item-input" id="createANewAccount-input9" name="userLName">
-        <span class="input-label">Last Name</span>
-        <input type="text" placeholder="Enter Your Family Name">
-      </label>
-      <label class="item item-input" id="createANewAccount-input10" name="userAddress">
-        <span class="input-label">Address</span>
-        <input type="text" placeholder="Home Address">
-      </label>
-      <label class="item item-input" id="createANewAccount-input11" name="userCity">
-        <span class="input-label">City</span>
-        <input type="text" placeholder="City Name">
-      </label>
-      <label class="item item-select" id="createANewAccount-select4" name="userState">
-        <span class="input-label">State</span>
-        <select></select>
-      </label>
-      <label class="item item-input" id="createANewAccount-input12" name="userZip">
-        <span class="input-label">ZIP</span>
-        <input type="text" placeholder="">
-      </label>
-      <label class="item item-input" id="createANewAccount-input13" name="userZip">
-        <span class="input-label">Contact #</span>
-        <input type="tel" placeholder="(XXX) XXX-XXXX">
-      </label>
-    </form>
-    <ion-list id="createANewAccount-list8">
-      <ion-item class="item-divider" id="createANewAccount-list-item-divider3"> Terms and Conditions</ion-item>
-    </ion-list>
-    <div id="createANewAccount-container1">
-      <form id="createANewAccount-form6" class="list">
-        <ion-checkbox id="createANewAccount-checkbox2"></ion-checkbox>
-      </form>
-    </div>
-    <a ui-sref="login()" id="createANewAccount-button13" class="button button-positive button-block">Sign up</a>
+      <ion-list id="createANewAccount-list7">
+        <ion-item class="item-divider" id="createANewAccount-list-item-divider2"> About You</ion-item>
+        <label class="item item-input" id="createANewAccount-input3" name="userFName">
+          <span class="input-label">First Name</span>
+          <input type="text" placeholder="Enter your First Name" ng-model="user.firstName">
+        </label>
+        <label class="item item-input" id="createANewAccount-input9" name="userLName">
+          <span class="input-label">Last Name</span>
+          <input type="text" placeholder="Enter Your Family Name" ng-model="user.lastName">
+        </label>
+        <label class="item item-input" id="createANewAccount-input10" name="userAddress">
+          <span class="input-label">Address</span>
+          <input type="text" placeholder="Home Address" ng-model="user.streetAddress">
+        </label>
+        <label class="item item-input" id="createANewAccount-input11" name="userCity">
+          <span class="input-label">City</span>
+          <input type="text" placeholder="City Name" ng-model="user.city">
+        </label>
+		<label class="item item-select" id="createANewAccount-select4" name="userState">
+          <span class="input-label">State</span>
+          <select></select>
+        </label>
+        <label class="item item-input" id="createANewAccount-input12" name="userZip">
+          <span class="input-label">ZIP</span>
+          <input type="text" placeholder="" ng-model="user.Zip">
+        </label>
+        <label class="item item-input" id="createANewAccount-input13" name="userContact">
+          <span class="input-label">Contact #</span>
+          <input type="tel" placeholder="(XXX) XXX-XXXX" ng-model="user.Contact">
+        </label>
+        
+        <ion-list id="createANewAccount-list8">
+          <ion-item class="item-divider" id="createANewAccount-list-item-divider3"> Terms and Conditions</ion-item>
+          <ion-checkbox id="createANewAccount-checkbox2" ng-model="user.ToC"></ion-checkbox>
+        </ion-list>
+      </ion-list>
+      <button type=submit id="createANewAccount-button13" class="button button-positive button-block">Sign up</button>
+	  <div class="error" ng-show="error.message" style="text-align:center;" class="show-list-numbers-and-dots">
+		<p style="color:#FF0000;">
+          <b>{{ error.message }}</b>
+	  </div>
+	</form>
   </ion-content>
 </ion-view>

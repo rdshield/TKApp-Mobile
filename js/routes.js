@@ -84,6 +84,14 @@ angular.module('app.routes', [])
     templateUrl: 'templates/createANewAccount.html',
     controller: 'createANewAccountCtrl'
   })
+  
+   .state('accountConfirmation', {
+	cache: false,
+    url: '/page12',
+    templateUrl: 'templates/accountConfirmation.html',
+    controller: 'accountConfirmationCtrl'
+  })
+
 
 $urlRouterProvider.otherwise('/Login')
 
