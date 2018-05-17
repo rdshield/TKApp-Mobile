@@ -135,7 +135,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
 
 // Get Sub = awsCognitoIdentityFactory.getSub()
 function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory) {
-	$scope.children = [];
+	if($scope.children == null) {	$scope.children = [];	}
 	$scope.error = { message: null};
 
 	$scope.setupLogin = function() {
@@ -173,18 +173,26 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory) {
 	$scope.child = {};
-	$scope.currChallenges = {};
-	$scope.compChallenges = {};
-	$scope.disChallenges = {};
+	$scope.challenges = [];
+	$scope.currChallenges = [];
+	$scope.compChallenges = [];
+	$scope.disChallenges = [];
 	
 	$scope.getChallenges = function() {
-		console.log(AWS.config);
-		console.log(AWS.config.child);
+		console.log($scope.child);
+		a = DBClientFactory.readItems('challenges').then( function(result) {
+			//console.log(result);
+			$scope.challenges = result.Items;
+			b = $scope.child.currChallenges;
+			currLength = $scope.child.currChallenges.values.length;
+			// for(var i=0; i<currLength; i++) {
+
+			// }
+		});
 	}
 	
 	$scope.setupLogin = function() {
 		getUserFromLocalStorage();
-		console.log(AWS.config);
 		$scope.child = AWS.config.child;
 		$scope.getChallenges();
 	}

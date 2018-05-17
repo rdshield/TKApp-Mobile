@@ -2,8 +2,9 @@
   <ion-content padding="true" class="manual-ios-statusbar-padding">
     <ion-list id="missions-list3">
       <ion-item class="item-divider" id="missions-list-item-divider4"> Missions I've Accepted</ion-item>
-	  <ion-item ng-repeat="chal in currChallenges" ng-click="selectChild(child)">
-		 </ion-item> 
+	  <ion-item ng-repeat="chal in currChallenges|orderBy: 'challengeId'" ng-click="selectChild(child)">
+		{{chal.challengeName}}
+		</ion-item> 
       <ion-item class="item-divider" id="missions-list-item-divider6"> Missions I've Completed</ion-item>
       <ion-item ng-repeat="chal in compChallenges" ng-click="selectChild(child)">
 		 </ion-item> 
