@@ -1,4 +1,4 @@
-angular.module('app.controllers', ['aws.cognito.identity', 'ngMessages'])
+angular.module('app.controllers', ['aws.cognito.identity', 'DBClient', 'ngMessages', ])
 
 .controller('loginCtrl', ['$scope','$state', '$stateParams', 'awsCognitoIdentityFactory', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
@@ -109,15 +109,37 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
-	console.log($scope);
+	$scope.error = { message: null };
 	$scope.user = {};
 	$scope.user.email = $stateParams.email;
+	
+	$scope.confirmAccount = function() {
+		awsCognitoIdentityFactory.confirmAccount($scope.user.email, $scope.user.confirmCode, function(err) {
+			if(!err) {
+				$scope.error.message = "Your account has been successfully validated. Please login to complete setup.";
+				setTimeout(function(){ $state.go('login',{}, {reload: true}); },3000);
+			}
+			else {
+				console.log(err);
+				$scope.error.message = err.message + ". Please try again.";
+			}
+		})
+		
+	}
 }])
-.controller('select_ChildCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+
+.controller('select_ChildCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', 'DBClientFactory',  // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams) {
 
+// Get Sub = awsCognitoIdentityFactory.getSub()
+function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory) {
+	$scope.error = { message: awsCognitoIdentityFactory.getSub() };
+	//DBClientFactory.getParameters('child',{})
+	DBClientFactory.readItems('child','parentId = :thisParent', {':thisParent': awsCognitoIdentityFactory.getSub() }).then(function(result) {
+			console.log(result);
+	});
+	
 }])
  
 .controller('missionsCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller

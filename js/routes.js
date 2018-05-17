@@ -37,9 +37,6 @@ angular.module('app.routes', [])
         controller: 'badgesCtrl'
       }
     },
-	params: {
-		'email': "",
-	}
   })
 
   .state('tabsController', {
@@ -59,7 +56,7 @@ angular.module('app.routes', [])
     templateUrl: 'templates/login.html',
     controller: 'loginCtrl',
 	params: {
-		userEmail: "''"		
+		email: ""		
 	},
   })
 
@@ -90,7 +87,7 @@ angular.module('app.routes', [])
     templateUrl: 'templates/createANewAccount.html',
     controller: 'createANewAccountCtrl',
 	params: {
-		userEmail: "''"		
+		email: ""		
 	},
   })
   
@@ -100,7 +97,7 @@ angular.module('app.routes', [])
     templateUrl: 'templates/accountConfirmation.html',
     controller: 'accountConfirmationCtrl',
 	params: {
-		userEmail: "''"		
+		email: ""		
 	},
   })
 

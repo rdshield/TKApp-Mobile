@@ -74,9 +74,10 @@ angular.module('aws.cognito.identity', [])
       cognitoUser.getSession(function(err, session) {
         if (err) {
           callback(err);
+		  console.log(err);
           return false;
         }
-        //console.log('session validity: ' + session.isValid());
+        console.log('session validity: ' + session.isValid());
         initConfigCredentials(session.idToken.jwtToken);
         return callback(null, session.isValid());
       });
@@ -85,6 +86,11 @@ angular.module('aws.cognito.identity', [])
 
   aws.getUserName = function() {
     if(cognitoUser) return cognitoUser.username
+    else return false
+  }
+  
+  aws.getSub = function() {
+    if(cognitoUser) return AWS.config.sub
     else return false
   }
 
@@ -107,11 +113,13 @@ angular.module('aws.cognito.identity', [])
   initConfigCredentials = function(jwtToken) {
     var logins = {};
     logins[cognitoEndpoint + "/" + userPoolId] = jwtToken;
-
+	
     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
       IdentityPoolId: identityPoolId,
       Logins: logins
     });
+	var b = atob(jwtToken.split(".")[1]);
+	AWS.config.sub  = JSON.parse(b).sub;
   }
 
   return aws;

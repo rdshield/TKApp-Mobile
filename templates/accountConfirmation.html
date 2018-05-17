@@ -3,7 +3,7 @@
     <div class="spacer" style="width: 300px; height: 10%;"></div>
     <h3 id="accountConfirmation-heading3" style="color:#000000;text-align:center;">Account Confirmation</h3>
     <div class="spacer" style="width: 300px; height: 10%;"></div>
-    <form id="accountConfirmation-form5" class="list">
+    <form id="accountConfirmation-form5" ng-submit="confirmAccount()" class="list" >
       <div class="spacer" style="width: 300px; height: 10%;"></div>
       <label class="item item-input" id="accountConfirmation-input14" name="userEmail">
         <input type="text" placeholder="Email Address" ng-model="user.email">
@@ -13,12 +13,14 @@
         <input type="text" placeholder="Confirmation Code" ng-model="user.confirmCode">
       </label>
       <div class="spacer" style="width: 300px; height: 40px;"></div>
-      <div id="accountConfirmation-markdown6" style="text-align:center;" class="show-list-numbers-and-dots">
-        <p style="color:#FF0000;">{{error}}</p>
-      </div>
+      <div class="error" ng-show="error.message" style="text-align:center;" class="show-list-numbers-and-dots">
+		<p style="color:#FF0000;">
+          <b>{{ error.message }}</b>
+	   </div>
       <div class="spacer" style="width: 300px; height: 40px;"></div>
       <button id="accountConfirmation-button12" class="button button-balanced button-block">Confirm Account</button>
       <a ui-sref="login()" id="accountConfirmation-button14" class="button button-positive button-small button-block button-clear">Back to Login</a>
     </form>
+
   </ion-content>
 </ion-view>
