@@ -110,6 +110,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
 	console.log($scope);
+	$scope.user = {};
 	$scope.user.email = $stateParams.email;
 }])
 .controller('select_ChildCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
