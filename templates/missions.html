@@ -1,15 +1,19 @@
-<ion-view title="Missions" id="page2" style="background-color:#FAFAFA;">
-  <ion-content padding="true" class="has-header">
+<ion-view title="Missions" hide-nav-bar="true" hide-back-button="true" id="page2" style="background-color:#FAFAFA;" ng-init="setupLogin()">
+  <ion-content padding="true" class="manual-ios-statusbar-padding">
     <ion-list id="missions-list3">
-      <ion-item class="item-thumbnail-left positive" id="missions-list-item4" ui-sref="tabsController.missionBriefing()">
-        <h2positive>Mission #1</h2positive>
-      </ion-item>
-      <ion-item class="item-thumbnail-left positive" id="missions-list-item9" href-inappbrowser="page13">
-        <h2positive>Mission #2</h2positive>
-      </ion-item>
-      <ion-item class="item-thumbnail-left positive" id="missions-list-item10" href-inappbrowser="page14">
-        <h2positive>Mission #3</h2positive>
-      </ion-item>
+      <ion-item class="item-divider" id="missions-list-item-divider4"> Missions I've Accepted</ion-item>
+	  <ion-item ng-repeat="chal in currChallenges" ng-click="selectChild(child)">
+		 </ion-item> 
+      <ion-item class="item-divider" id="missions-list-item-divider6"> Missions I've Completed</ion-item>
+      <ion-item ng-repeat="chal in compChallenges" ng-click="selectChild(child)">
+		 </ion-item> 
+	  <ion-item class="item-divider" id="missions-list-item-divider7"> Inactive Missions</ion-item>
+	  <ion-item ng-repeat="chal in disChallenges" ng-click="selectChild(child)">
+		 </ion-item> 
     </ion-list>
+    <div class="spacer" style="width: 300px;"></div>
+    <div style="margin-right:-20px;">
+      <button id="missions-button18" style="left:-10px;" class="button button-balanced button-full icon ion-android-add"> Add a Mission</button>
+    </div>
   </ion-content>
 </ion-view>

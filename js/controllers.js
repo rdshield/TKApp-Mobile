@@ -132,22 +132,72 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 
+
 // Get Sub = awsCognitoIdentityFactory.getSub()
 function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory) {
-	$scope.error = { message: awsCognitoIdentityFactory.getSub() };
-	//DBClientFactory.getParameters('child',{})
-	DBClientFactory.readItems('child','parentId = :thisParent', {':thisParent': awsCognitoIdentityFactory.getSub() }).then(function(result) {
-			console.log(result);
-	});
+	$scope.children = [];
+	$scope.error = { message: null};
+
+	$scope.setupLogin = function() {
+		getUserFromLocalStorage();
+		//console.log(AWS.config);
+		$scope.getChildren();
+	}
 	
+	$scope.getChildren = function() {
+		DBClientFactory.readItems('child','parentId = :thisParent', {':thisParent': awsCognitoIdentityFactory.getSub() }).then(function(result) {
+			//console.log(result);
+			$scope.children = result.Items;
+		});
+	}
+	
+	function getUserFromLocalStorage(){
+      awsCognitoIdentityFactory.getUserFromLocalStorage(function(err, isValid) {
+        if(err) {
+          $scope.error.message = err.message;
+          return false;
+        }
+        if(isValid) $state.go('select_Child', {}, {reload: true})
+      });
+    }	
+	
+	$scope.selectChild = function(child) {
+		AWS.config.child = child;
+		$state.go('tabsController.missions',{child}, {reload: true});
+	}
+
 }])
  
-.controller('missionsCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('missionsCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', 'DBClientFactory', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams) {
+function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory) {
+	$scope.child = {};
+	$scope.currChallenges = {};
+	$scope.compChallenges = {};
+	$scope.disChallenges = {};
+	
+	$scope.getChallenges = function() {
+		console.log(AWS.config);
+		console.log(AWS.config.child);
+	}
+	
+	$scope.setupLogin = function() {
+		getUserFromLocalStorage();
+		console.log(AWS.config);
+		$scope.child = AWS.config.child;
+		$scope.getChallenges();
+	}
 
-
+	function getUserFromLocalStorage(){
+    awsCognitoIdentityFactory.getUserFromLocalStorage(function(err, isValid) {
+        if(err) {
+          $scope.error.message = err.message;
+          return false;
+        }
+        if(isValid) $state.go('tabsController.missions', {}, {reload: true})
+      });
+    }
 }])
    
 .controller('profileCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller

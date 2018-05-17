@@ -9,14 +9,17 @@ angular.module('app.routes', [])
   $stateProvider
     
 
-      .state('tabsController.missions', {
+  .state('tabsController.missions', {
     url: '/page2',
     views: {
       'tab1': {
         templateUrl: 'templates/missions.html',
         controller: 'missionsCtrl'
       }
-    }
+    },
+	params: {
+		child: {},
+	},
   })
 
   .state('tabsController.profile', {
@@ -26,7 +29,10 @@ angular.module('app.routes', [])
         templateUrl: 'templates/profile.html',
         controller: 'profileCtrl'
       }
-    }
+    },
+	params: {
+		child: {},
+	},
   })
 
   .state('tabsController.badges', {
@@ -37,6 +43,9 @@ angular.module('app.routes', [])
         controller: 'badgesCtrl'
       }
     },
+	params: {
+		child: {},
+	},
   })
 
   .state('tabsController', {
@@ -71,9 +80,12 @@ angular.module('app.routes', [])
   })
 
   .state('select_Child', {
-    url: '/page10',
+    url: '/:',
     templateUrl: 'templates/select_Child.html',
-    controller: 'select_ChildCtrl'
+    controller: 'select_ChildCtrl',
+	params: {
+		child: {},
+	},
   })
 
   .state('challenge_Submitted', {
