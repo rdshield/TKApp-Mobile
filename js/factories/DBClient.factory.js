@@ -54,6 +54,30 @@ angular.module('DBClient', [])
 			});
 		});
 	}
+	
+	DBClient.writeItem = function(wParams) {
+		docClient = new AWS.DynamoDB.DocumentClient();
+		docClient.put(wParams, function(err,data) {
+			if(!err) {
+				console.log("Success - Write Completed");
+			}
+			else { 
+				console.log("Unable to Write -" + err);
+			}
+		});
+	}
+	
+	DBClient.updateItem = function(wParams) {
+		docClient = new AWS.DynamoDB.DocumentClient();
+		docClient.update(wParams, function(err,data) {
+			if(!err) {
+				console.log("Success - Update Completed");
+			}
+			else { 
+				console.log("Unable to Update -" + err);
+			}
+		});
+		}
 
 
 	return DBClient;

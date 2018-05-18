@@ -80,11 +80,12 @@ angular.module('app.routes', [])
   })
 
   .state('select_Child', {
-    url: '/:',
+    url: '/',
     templateUrl: 'templates/select_Child.html',
     controller: 'select_ChildCtrl',
 	params: {
 		child: {},
+		childCount: '',
 	},
   })
 
@@ -113,8 +114,15 @@ angular.module('app.routes', [])
 	},
   })
 
-
+.state('addAChild', {
+    url: '/page16',
+    templateUrl: 'templates/addAChild.html',
+    controller: 'addAChildCtrl',
+	params: {
+		childCount: '',
+	},
+  }),
+  	
+	
 $urlRouterProvider.otherwise('/Login')
-
-
 });

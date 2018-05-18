@@ -6,11 +6,13 @@
 		{{chal.challengeName}}
 		</ion-item> 
       <ion-item class="item-divider" id="missions-list-item-divider6"> Missions I've Completed</ion-item>
-      <ion-item ng-repeat="chal in compChallenges" ng-click="selectChild(child)">
-		 </ion-item> 
+      <ion-item ng-repeat="chal in compChallenges|orderBy: 'challengeId'" ng-click="selectChild(child)">
+		{{chal.challengeName}}
+		</ion-item> 
 	  <ion-item class="item-divider" id="missions-list-item-divider7"> Inactive Missions</ion-item>
-	  <ion-item ng-repeat="chal in disChallenges" ng-click="selectChild(child)">
-		 </ion-item> 
+	  <ion-item ng-repeat="chal in disChallenges|orderBy: 'challengeId'" ng-click="selectChild(child)">
+		{{chal.challengeName}}
+		</ion-item> 
     </ion-list>
     <div class="spacer" style="width: 300px;"></div>
     <div style="margin-right:-20px;">

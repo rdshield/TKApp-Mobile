@@ -135,16 +135,21 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
 
 // Get Sub = awsCognitoIdentityFactory.getSub()
 function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory) {
-	if($scope.children == null) {	$scope.children = [];	}
 	$scope.error = { message: null};
 
+	$scope.$on('$stateChangeSuccess', function() {
+		$scope.getChildren();
+	});
+	
+	
 	$scope.setupLogin = function() {
 		getUserFromLocalStorage();
-		//console.log(AWS.config);
+		if($scope.children == null) {	$scope.children = [];	}
 		$scope.getChildren();
 	}
 	
 	$scope.getChildren = function() {
+		console.log("Getting Children");
 		DBClientFactory.readItems('child','parentId = :thisParent', {':thisParent': awsCognitoIdentityFactory.getSub() }).then(function(result) {
 			//console.log(result);
 			$scope.children = result.Items;
@@ -168,6 +173,56 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 
 }])
  
+.controller('addAChildCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', 'DBClientFactory', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+// You can include any angular dependencies as parameters for this function
+// TIP: Access Route Parameters for your page via $stateParams.parameterName
+function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory) {
+	$scope.user = {};
+	$scope.getUserFromLocalStorage = function() {
+      awsCognitoIdentityFactory.getUserFromLocalStorage(function(err, isValid) {
+        if(err) {
+          $scope.error.message = err.message;
+          return false;
+        }
+        if(isValid) { $state.go('select_Child', {}) }
+      });
+    }
+
+	$scope.addChild = function() {
+		sub = AWS.config.sub;
+		DBClientFactory.readItem(DBClientFactory.getDeleteParameters('user',{'userId': sub})).then(function(a) {
+			childCount = a.userCount+1;
+			temp = $scope.user.childName;
+			$scope.user.childName = (temp.substring(0,1).toUpperCase() + temp.substring(1,temp.length).toLowerCase()); 
+			var params = {
+				childId:		(sub +":"+ childCount),
+				Id:				childCount,
+				childName:		$scope.user.childName,
+				childGrade: 	$scope.user.childGrade,
+				childGender:    $scope.user.childGender,
+				complChallenges:[],
+				currChallenges: [],
+				//disChallenges:[],
+				parentId:		sub,
+			}
+			
+			var param = DBClientFactory.getParameters('child',params);
+			DBClientFactory.writeItem(param);
+			DBClientFactory.updateItem({	
+				TableName: 'user',
+				Key: { 'userId': sub },
+					UpdateExpression: 'set #a = :x',
+					ExpressionAttributeNames: {'#a': 'userCount'},
+					ExpressionAttributeValues: { ':x' : childCount,},
+			});		
+			console.log($scope);
+			$state.go("select_Child", {}, {});
+		});
+
+	}
+
+}])
+ 
 .controller('missionsCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', 'DBClientFactory', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
@@ -179,15 +234,29 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	$scope.disChallenges = [];
 	
 	$scope.getChallenges = function() {
-		console.log($scope.child);
 		a = DBClientFactory.readItems('challenges').then( function(result) {
 			//console.log(result);
 			$scope.challenges = result.Items;
-			b = $scope.child.currChallenges;
+			b = $scope.child.currChallenges.values;
 			currLength = $scope.child.currChallenges.values.length;
-			// for(var i=0; i<currLength; i++) {
-
-			// }
+			 for(var i=0; i<currLength; i++) {
+				var result = $scope.challenges.filter(function( obj ) { return obj.challengeId == b[i]; });
+					$scope.currChallenges.push(result[0]);
+			 }
+			 
+			c = $scope.child.compChallenges.values;
+			compLength = $scope.child.compChallenges.values.length;
+			 for(var i=0; i<compLength; i++) {
+				var result = $scope.challenges.filter(function( obj ) { return obj.challengeId == c[i]; });
+					$scope.compChallenges.push(result[0]);
+			 }
+			 
+			d = $scope.child.disChallenges.values;
+			disLength = $scope.child.disChallenges.values.length;
+			 for(var i=0; i<disLength; i++) {
+				var result = $scope.challenges.filter(function( obj ) { return obj.challengeId == d[i]; });
+					$scope.disChallenges.push(result[0]);
+			 }
 		});
 	}
 	
