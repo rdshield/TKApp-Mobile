@@ -215,7 +215,6 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 					ExpressionAttributeNames: {'#a': 'userCount'},
 					ExpressionAttributeValues: { ':x' : childCount,},
 			});		
-			console.log($scope);
 			$state.go("select_Child", {}, {});
 		});
 
@@ -230,12 +229,11 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	$scope.child = {};
 	$scope.challenges = [];
 	$scope.currChallenges = [];
-	$scope.compChallenges = [];
+	$scope.complChallenges = [];
 	$scope.disChallenges = [];
 	
 	$scope.getChallenges = function() {
 		a = DBClientFactory.readItems('challenges').then( function(result) {
-			//console.log(result);
 			$scope.challenges = result.Items;
 			b = $scope.child.currChallenges.values;
 			currLength = $scope.child.currChallenges.values.length;
@@ -244,11 +242,11 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 					$scope.currChallenges.push(result[0]);
 			 }
 			 
-			c = $scope.child.compChallenges.values;
-			compLength = $scope.child.compChallenges.values.length;
+			c = $scope.child.complChallenges.values;
+			compLength = $scope.child.complChallenges.values.length;
 			 for(var i=0; i<compLength; i++) {
 				var result = $scope.challenges.filter(function( obj ) { return obj.challengeId == c[i]; });
-					$scope.compChallenges.push(result[0]);
+					$scope.complChallenges.push(result[0]);
 			 }
 			 
 			d = $scope.child.disChallenges.values;
