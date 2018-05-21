@@ -73,15 +73,18 @@ angular.module('aws.cognito.identity', [])
     if (cognitoUser != null) {
       cognitoUser.getSession(function(err, session) {
         if (err) {
+	      console.log(err);
           callback(err);
-		  console.log(err);
           return false;
         }
-        console.log('session validity: ' + session.isValid());
+        //console.log('session validity: ' + session.isValid());
         initConfigCredentials(session.idToken.jwtToken);
         return callback(null, session.isValid());
       });
-    }
+    } else { 
+		console.log("No Login Found")
+		return callback(null, false);
+	}
   }
 
   aws.getUserName = function() {
@@ -121,6 +124,5 @@ angular.module('aws.cognito.identity', [])
 	var b = atob(jwtToken.split(".")[1]);
 	AWS.config.sub  = JSON.parse(b).sub;
   }
-
   return aws;
 });

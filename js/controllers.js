@@ -1,19 +1,29 @@
 angular.module('app.controllers', ['aws.cognito.identity', 'DBClient', 'ngMessages', ])
 
-.controller('loginCtrl', ['$scope','$state', '$stateParams', 'awsCognitoIdentityFactory', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('loginCtrl', ['$scope','$state', '$stateParams', 'awsCognitoIdentityFactory','StorageService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $state, $stateParams, awsCognitoIdentityFactory) {
+function ($scope, $state, $stateParams, awsCognitoIdentityFactory,StorageService) {
+	$scope.$storage = StorageService.getAll();
     $scope.user = { email: "", password: "" };
     $scope.error = { message: null };
+	
+	$scope.setupPage = function() {
+		//StorageService.add('things',['alpha']);
+		$scope.getUserFromLocalStorage();	
+	}
 
 	$scope.getUserFromLocalStorage = function() {
       awsCognitoIdentityFactory.getUserFromLocalStorage(function(err, isValid) {
         if(err) {
-          $scope.error.message = err.message;
-          return false;
-        }
-        if(isValid) $state.go('select_Child', {}, {reload: true})
+			console.log('1')
+			$scope.error.message = err.message;
+			return false;
+        } else {
+			if(isValid) { $state.go('select_Child', {}, {reload: true}) }
+			else {	StorageService.resetToDefault(); 
+			}
+		}
       });
     }
 	
@@ -42,7 +52,7 @@ function ($scope, $state, $stateParams, awsCognitoIdentityFactory) {
 			}
 			clearForm(login)
 			console.log("Login Successful");
-			$state.go('select_Child', {}, {reload:true});
+			$state.go('select_Child', {load: true,}, {reload:true});
 			})
 		}
     }
@@ -52,12 +62,6 @@ function ($scope, $state, $stateParams, awsCognitoIdentityFactory) {
 		clearForm(login);
 	}
 	
-	$scope.userLogged = function() {
-      if(awsCognitoIdentityFactory.ifUserLogged) {
-        $stateParams.go('select_Child', {}, {reload: true});
-      }
-    }
-
     var clearForm = function(login) {
       $scope.user = { email: '', password: '' }
     }
@@ -109,6 +113,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
+	console.log($stateParams);
 	$scope.error = { message: null };
 	$scope.user = {};
 	$scope.user.email = $stateParams.email;
@@ -128,33 +133,40 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
 	}
 }])
 
-.controller('select_ChildCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', 'DBClientFactory',  // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('select_ChildCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', 'DBClientFactory', 'StorageService',  // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 
-
 // Get Sub = awsCognitoIdentityFactory.getSub()
-function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory) {
+function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory, StorageService) {
+	$scope.$storage = StorageService.getAll();
+	$scope.add = function (key, thing) { StorageService.add(key, thing); };
+	//console.log($scope.$storage)
 	$scope.error = { message: null};
 
 	$scope.$on('$stateChangeSuccess', function() {
 		$scope.getChildren();
 	});
 	
-	
 	$scope.setupLogin = function() {
 		getUserFromLocalStorage();
-		if($scope.children == null) {	$scope.children = [];	}
 		$scope.getChildren();
 	}
 	
 	$scope.getChildren = function() {
-		console.log("Getting Children");
 		DBClientFactory.readItems('child','parentId = :thisParent', {':thisParent': awsCognitoIdentityFactory.getSub() }).then(function(result) {
-			//console.log(result);
-			$scope.children = result.Items;
+			$scope.add('children',result.Items);
 		});
 	}
+
+	$scope.selectChild = function(child) {
+		$scope.add('child', child);
+		$scope.add('currentChallenges', (child.currChallenges) );
+		$scope.add('completedChallenges', child.complChallenges );
+		$scope.add('canceledChallenges', child.disChallenges);
+		$state.go('tabsController.missions',{}, {});
+	}
+
 	
 	function getUserFromLocalStorage(){
       awsCognitoIdentityFactory.getUserFromLocalStorage(function(err, isValid) {
@@ -162,30 +174,32 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
           $scope.error.message = err.message;
           return false;
         }
-        if(isValid) $state.go('select_Child', {}, {reload: true})
+		$scope.AWS = AWS.config;
       });
     }	
 	
-	$scope.selectChild = function(child) {
-		AWS.config.child = child;
-		$state.go('tabsController.missions',{child}, {reload: true});
-	}
-
 }])
  
-.controller('addAChildCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', 'DBClientFactory', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('addAChildCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', 'DBClientFactory', 'StorageService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory) {
+function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory, StorageService) {
+	$scope.$storage = StorageService.getAll();
+	$scope.add = function (key, thing) { StorageService.add(key, thing); };	
 	$scope.user = {};
+	
+		$scope.setupPage = function() {
+			$scope.getUserFromLocalStorage();	
+		}
+	
 	$scope.getUserFromLocalStorage = function() {
-      awsCognitoIdentityFactory.getUserFromLocalStorage(function(err, isValid) {
-        if(err) {
-          $scope.error.message = err.message;
-          return false;
-        }
-        if(isValid) { $state.go('select_Child', {}) }
-      });
+		awsCognitoIdentityFactory.getUserFromLocalStorage(function(err, isValid) {
+			if(err) {
+				$scope.error.message = err.message;
+				return false;
+			}
+			//console.log($scope);
+		});
     }
 
 	$scope.addChild = function() {
@@ -202,7 +216,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 				childGender:    $scope.user.childGender,
 				complChallenges:[],
 				currChallenges: [],
-				//disChallenges:[],
+				disChallenges:	[],
 				parentId:		sub,
 			}
 			
@@ -214,7 +228,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 					UpdateExpression: 'set #a = :x',
 					ExpressionAttributeNames: {'#a': 'userCount'},
 					ExpressionAttributeValues: { ':x' : childCount,},
-			});		
+			});
 			$state.go("select_Child", {}, {});
 		});
 
@@ -222,47 +236,117 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 
 }])
  
-.controller('missionsCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', 'DBClientFactory', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('missionsCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', 'DBClientFactory', 'StorageService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory) {
-	$scope.child = {};
-	$scope.challenges = [];
+function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory, StorageService) {
+	$scope.$storage = StorageService.getAll();
+	$scope.add = function (key, thing) { StorageService.add(key, thing); };
+	
 	$scope.currChallenges = [];
 	$scope.complChallenges = [];
 	$scope.disChallenges = [];
 	
-	$scope.getChallenges = function() {
-		a = DBClientFactory.readItems('challenges').then( function(result) {
-			$scope.challenges = result.Items;
-			b = $scope.child.currChallenges.values;
-			currLength = $scope.child.currChallenges.values.length;
-			 for(var i=0; i<currLength; i++) {
-				var result = $scope.challenges.filter(function( obj ) { return obj.challengeId == b[i]; });
-					$scope.currChallenges.push(result[0]);
-			 }
-			 
-			c = $scope.child.complChallenges.values;
-			compLength = $scope.child.complChallenges.values.length;
-			 for(var i=0; i<compLength; i++) {
-				var result = $scope.challenges.filter(function( obj ) { return obj.challengeId == c[i]; });
-					$scope.complChallenges.push(result[0]);
-			 }
-			 
-			d = $scope.child.disChallenges.values;
-			disLength = $scope.child.disChallenges.values.length;
-			 for(var i=0; i<disLength; i++) {
-				var result = $scope.challenges.filter(function( obj ) { return obj.challengeId == d[i]; });
-					$scope.disChallenges.push(result[0]);
-			 }
-		});
-	}
+	$scope.$on('$stateChangeSuccess', function() {
+		$scope.buildList();
+	});
 	
 	$scope.setupLogin = function() {
+		getUserFromLocalStorage();
+		if($scope.$storage.child == {}) { 
+			$state.go('select_Child') 			
+		}
+		else {
+			$scope.getChallenges();
+			$scope.buildList();
+		}
+	}
+	
+	$scope.getChallenges = function() {
+		console.log($scope.$storage);
+		$scope.buildList();
+	}
+	
+	$scope.buildList = function() {
+		$scope.clearList();
+		console.log($scope.$storage);
+		console.log($scope.$storage.challenges);
+		
+		currLength = $scope.$storage.currentChallenges.length;
+		for(var i=0; i<currLength; i++) {
+			console.log($scope.$storage.challenges)
+			console.log($scope.$storage.currentChallenges[i]);
+			var result = $scope.$storage.challenges.filter(function( obj ) { console.log(obj); return obj.challengeId == $scope.$storage.currentChallenges[i] });
+			if(result.length != 0) {
+				console.log(result);
+				$scope.currChallenges.push(result[0]);
+			}
+		}
+		currLength = $scope.$storage.completedChallenges.length;
+		for(var i=0; i<currLength; i++) {
+			var result = $scope.$storage.challenges.filter(function( obj ) { return obj.challengeId == $scope.$storage.completedChallenges[i] });
+			if(result.length != 0) {
+				console.log(result);
+				$scope.complChallenges.push(result[0]);
+			}
+		}
+
+		currLength = $scope.$storage.canceledChallenges.length;
+		for(var i=0; i<currLength; i++) {
+			var result = $scope.$storage.challenges.filter(function( obj ) { return obj.challengeId == $scope.$storage.canceledChallenges[i] });
+			if(result.length != 0) {
+				console.log(result);
+				$scope.disChallenges.push(result[0]);
+			}
+		}
+	}
+
+	$scope.clearList = function() {
+		$scope.currChallenges = [];
+		$scope.complChallenges = [];
+		$scope.disChallenges = [];
+	}
+	
+	$scope.selectMission = function(mission) {
+		console.log(mission);
+		$state.go('missionBriefing',{mission}, {});
+	}
+
+
+	function getUserFromLocalStorage(){
+		awsCognitoIdentityFactory.getUserFromLocalStorage(function(err, isValid) {
+			if(err) {
+			  $scope.error.message = err.message;
+			  return false;
+			}
+		});
+    }
+}])
+   
+.controller('addMission', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', 'DBClientFactory', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+// You can include any angular dependencies as parameters for this function
+// TIP: Access Route Parameters for your page via $stateParams.parameterName
+function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory) {
+	$scope.challenges = [];
+	
+
+	
+	$scope.setupChallenges = function() {
 		getUserFromLocalStorage();
 		$scope.child = AWS.config.child;
 		$scope.getChallenges();
 	}
+	
+	$scope.getChallenges = function() {
+		DBClientFactory.readItems('challenges').then( function(result) {
+			$scope.challenges = result.Items;
+		});
+	}
+	
+	$scope.selectMission = function(mission) {
+		$state.go('tabsController.missionBriefing',{mission}, {});
+	}
+
 
 	function getUserFromLocalStorage(){
     awsCognitoIdentityFactory.getUserFromLocalStorage(function(err, isValid) {
@@ -270,11 +354,56 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
           $scope.error.message = err.message;
           return false;
         }
-        if(isValid) $state.go('tabsController.missions', {}, {reload: true})
+        if(isValid) $state.go('acceptAMission', {}, {reload: true})
       });
     }
+			
 }])
-   
+
+.controller('missionBriefingCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', 'DBClientFactory', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+// You can include any angular dependencies as parameters for this function
+// TIP: Access Route Parameters for your page via $stateParams.parameterName
+function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory) {
+	
+	$scope.mission = {};
+
+	$scope.setupMissionView = function() {
+		getUserFromLocalStorage();
+		$scope.child = AWS.config.child;
+		$scope.setupMission();
+	}
+	
+	$scope.setupMission = function() {
+		//console.log($scope);
+		//console.log($stateParams);
+		$scope.mission.Name = $stateParams.mission.challengeName;
+		$scope.mission.Description = $stateParams.mission.challengeDesc;
+		$scope.mission.category = $stateParams.mission.category
+	}
+
+	$scope.acceptMission = function() {
+		$scope.child.currChallenges.push($stateParams.mission.challengeId);
+		DBClientFactory.updateItem({	
+				TableName: 'child',
+				Key: { 'childId': $scope.child.childId },
+					UpdateExpression: 'set #a = :x',
+					ExpressionAttributeNames: {'#a': 'currChallenges'},
+					ExpressionAttributeValues: { ':x' : $scope.child.currChallenges,},
+		});	
+		$state.go('tabsController.missions',{}, {reload: true});	
+	}
+	
+	function getUserFromLocalStorage(){
+    awsCognitoIdentityFactory.getUserFromLocalStorage(function(err, isValid) {
+        if(err) {
+          $scope.error.message = err.message;
+          return false;
+        }
+      });
+    }
+
+}])
+
 .controller('profileCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
@@ -299,16 +428,6 @@ function ($scope, $stateParams) {
 
 }])
   
-.controller('missionBriefingCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams) {
-
-
-}])
-   
-
-   
 .controller('challenge_SubmittedCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName

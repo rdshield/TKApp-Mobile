@@ -1,4 +1,4 @@
-<ion-view title="Add a Child" cache-view="false" id="page16">
+<ion-view title="Add a Child" cache-view="false" id="page16" ng-init="setupPage()">
   <ion-content padding="true" scroll="false" class="has-header">
 	<div class="error" ng-show="error.message" style="text-align:center;" class="show-list-numbers-and-dots">
 		<p style="color:#FF0000;">
@@ -7,12 +7,12 @@
     <form id="addAChild-form8" class="list" ng-submit="addChild()">
       <label class="item item-input" id="addAChild-input16" name="childName">
         <span class="input-label">Child's Name</span>
-        <input type="text" placeholder="" ng-model="user.childName">
+        <input type="text" placeholder="" ng-model="user.childName" required >
       </label>
       <div class="spacer" style="width: 300px; height: 15px;"></div>
       <label class="item item-select" id="addAChild-select5" name="childGender">
         <span class="input-label">Gender</span>
-        <select ng-model="user.childGender">
+        <select ng-model="user.childGender" required >
           <option>Not Specified</option>
           <option>Male</option>
           <option>Female</option>
@@ -21,7 +21,7 @@
       <div class="spacer" style="width: 300px; height: 15px;"></div>
       <label class="item item-input" id="addAChild-input17" name="childGrade">
         <span class="input-label">Grade Level</span>
-        <input type="number" placeholder="" ng-model="user.childGrade">
+        <input type="number" min=0 max=14 placeholder="" ng-model="user.childGrade" required >
       </label>
       <div class="spacer" style="width: 300px; height: 155px;"></div>
       <button type=submit id="addAChild-button20" class="button button-balanced button-block">Add Child</button>

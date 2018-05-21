@@ -1,12 +1,17 @@
-<ion-view title="Mission Briefing" id="page9">
+<ion-view title="Mission Briefing" id="page9" ng-init="setupMissionView()">
   <ion-content padding="true" class="has-header">
-    <h4 id="missionBriefing-heading2" style="color:#000000;">Mission Name</h4>
+    <h4 id="missionBriefing-heading2" ng-if="mission.Name" " style="color:#000000;" ng-model="mission.Name"> {{mission.Name}} </h4>
     <div style="margin: 0px; line-height: 250px; background-color: rgb(232, 235, 239); text-align: center;">
-      <i class="icon ion-image" style="font-size: 64px; color: rgb(136, 136, 136); vertical-align: middle;"></i>
+      <i class="icon ion-image" style="font-size: 64px; color: rgb(136, 136, 136); vertical-align: middle;" ng-model="mission.pic"></i>
     </div>
     <div id="missionBriefing-markdown4" class="show-list-numbers-and-dots">
-      <p style="color:#000000;">This is where the challenge description goes and what the kids would have to do.</p>
+	  <br>
+	  <b><i> Mission Type: {{mission.category}} </i></b>
+      <br>
+	  <br>
+	  <p style="color:#000000;" ng-model="mission.Desc">{{mission.Description}}</p>
+	  <br>
     </div>
-    <a href-inappbrowser="page12" id="missionBriefing-button5" class="button button-assertive button-block">Accept this Mission!</a>
+    <button id="missionBriefing-button5" class="button button-assertive button-block" ng-click="acceptMission()">Accept this Mission!</button>
   </ion-content>
 </ion-view>

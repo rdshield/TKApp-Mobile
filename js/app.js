@@ -1,4 +1,4 @@
-angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.directives','app.services',])
+angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.directives','app.services','ngStorage'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -9,7 +9,6 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.directives
       cordova.plugins.Keyboard.disableScroll(true);
     }
     if (window.StatusBar) {
-      // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
   });

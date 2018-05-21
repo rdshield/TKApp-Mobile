@@ -18,7 +18,7 @@ angular.module('app.routes', [])
       }
     },
 	params: {
-		child: {},
+		mission: {},
 	},
   })
 
@@ -30,9 +30,7 @@ angular.module('app.routes', [])
         controller: 'profileCtrl'
       }
     },
-	params: {
-		child: {},
-	},
+
   })
 
   .state('tabsController.badges', {
@@ -43,9 +41,6 @@ angular.module('app.routes', [])
         controller: 'badgesCtrl'
       }
     },
-	params: {
-		child: {},
-	},
   })
 
   .state('tabsController', {
@@ -64,9 +59,6 @@ angular.module('app.routes', [])
     url: '/Login',
     templateUrl: 'templates/login.html',
     controller: 'loginCtrl',
-	params: {
-		email: ""		
-	},
   })
 
   .state('tabsController.missionBriefing', {
@@ -76,17 +68,16 @@ angular.module('app.routes', [])
         templateUrl: 'templates/missionBriefing.html',
         controller: 'missionBriefingCtrl'
       }
-    }
+    },
+	params: {
+		mission: {},
+	},
   })
 
   .state('select_Child', {
     url: '/',
     templateUrl: 'templates/select_Child.html',
     controller: 'select_ChildCtrl',
-	params: {
-		child: {},
-		childCount: '',
-	},
   })
 
   .state('challenge_Submitted', {
@@ -114,15 +105,21 @@ angular.module('app.routes', [])
 	},
   })
 
-.state('addAChild', {
+  .state('addAChild', {
     url: '/page16',
     templateUrl: 'templates/addAChild.html',
     controller: 'addAChildCtrl',
-	params: {
-		childCount: '',
-	},
-  }),
+  })
   	
+  .state('addMission', {
+    url: '/missionAccept',
+    templateUrl: 'templates/addMission.html',
+    controller: 'addMission',
+	params: {
+		mission: {},		
+	},
+  })
+
 	
 $urlRouterProvider.otherwise('/Login')
 });

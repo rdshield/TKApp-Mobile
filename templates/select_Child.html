@@ -6,8 +6,9 @@
 	</div>
     <h3 id="select_Child-heading1" style="color:#000000;text-align:center;">Choose Your Hero!</h3>
     <div class="spacer" style="width: 300px; height: 15%;"></div>
-    <ion-item ng-repeat="child in children" ng-click="selectChild(child)">
-	{{child.childName}} - Grade Level: {{child.childGrade}} </ion-item> 
+    <ion-item ng-repeat="child in $storage.children" ng-click="selectChild(child)">
+		{{child.childName}} - Grade Level: {{child.childGrade}}
+		</ion-item> 
     <button ui-sref="addAChild()" id="select_Child-button17" class="button button-balanced button-block icon ion-android-add"> Add a New Child</button>
   </ion-content>
 </ion-view>

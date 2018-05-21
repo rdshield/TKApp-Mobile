@@ -29,6 +29,7 @@ angular.module('DBClient', [])
 			});
 		});
 	}
+
 	
 	DBClient.readItems = function(tableId,filter='',exp={}){
 		var params = {
