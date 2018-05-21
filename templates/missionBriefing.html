@@ -13,8 +13,8 @@
 	  <br>
     </div>
     <button id="missionBriefing-button5" ng-if="type == 0" class="button button-balanced button-block" ng-click="acceptMission()">Accept this Mission!</button>
-	<button id="missionBriefing-button5" ng-if="type == 1" class="button button-balanced button-block" ng-click="acceptMission()">Complete this Mission!</button>
-	<button id="missionBriefing-button5" ng-if="type == 1" class="button button-assertive button-block" ng-click="acceptMission()">Cancel this Mission</button>
+	<button id="missionBriefing-button5" ng-if="type == 1" class="button button-balanced button-block" ng-click="submitMission()">Complete this Mission!</button>
+	<button id="missionBriefing-button5" ng-if="type == 1" class="button button-assertive button-block" ng-click="cancelMission()">Cancel this Mission</button>
 	<button id="missionBriefing-button5" ng-disabled=true ng-if="type == 2" class="button button-dark button-block">Mission Already Completed</button>
   </ion-content>
 </ion-view>

@@ -286,15 +286,6 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 						$scope.complChallenges.push(result[0]);
 					}
 				}
-
-				currLength = $scope.$storage.canceledChallenges.length;
-				for(var i=0; i<currLength; i++) {
-					var result = $scope.$storage.challenges.filter(function( obj ) { return obj.challengeId == $scope.$storage.canceledChallenges[i] });
-					if(result.length != 0) {
-						//console.log(result);
-						$scope.disChallenges.push(result[0]);
-					}
-				}	
 				$state.go('tabsController.missions',{},{reload:true});
 			} else { }
 			
@@ -328,7 +319,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory, StorageService) {
 	$scope.$storage = StorageService.getAll();
 	$scope.add = function (key, thing) { StorageService.add(key, thing); };
-	$scope.challenges = [];
+	$scope.challenges= [];
 
 	$scope.setupChallenges = function() {
 		getUserFromLocalStorage();
@@ -337,9 +328,12 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	}
 	
 	$scope.getChallenges = function() {
-		DBClientFactory.readItems('challenges').then( function(result) {
-			$scope.challenges = result.Items;
-		});
+		length = $scope.$storage.challenges.length;
+		for(var i=0;i<length;i++) {
+			if($scope.$storage.currentChallenges.indexOf($scope.$storage.challenges[i].challengeId) == -1) {
+				$scope.challenges.push($scope.$storage.challenges[i]);
+			}
+		}
 	}
 	
 	$scope.selectMission = function(mission) {
@@ -353,7 +347,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
           $scope.error.message = err.message;
           return false;
         }
-        if(isValid) $state.go('acceptAMission', {}, {reload: true})
+        if(isValid) $state.go('addMission', {}, {reload: true})
       });
     }
 			
@@ -363,7 +357,8 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory, StorageService) {
-	console.log($stateParams);
+	$scope.$storage = StorageService.getAll();
+	$scope.add = function (key, thing) { StorageService.add(key, thing); };
 	$scope.mission = {};
 	$scope.type = $stateParams.type;
 
@@ -374,25 +369,51 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	}
 	
 	$scope.setupMission = function() {
-		//console.log($scope);
-		//console.log($stateParams);
 		$scope.mission.Name = $stateParams.mission.challengeName;
 		$scope.mission.Description = $stateParams.mission.challengeDesc;
-		$scope.mission.category = $stateParams.mission.category
+		$scope.mission.category = $stateParams.mission.category;
+		$scope.mission.Id = $stateParams.mission.challengeId;
 	}
 
 	$scope.acceptMission = function() {
-		$scope.child.currChallenges.push($stateParams.mission.challengeId);
-		DBClientFactory.updateItem({	
-				TableName: 'child',
-				Key: { 'childId': $scope.child.childId },
-					UpdateExpression: 'set #a = :x',
-					ExpressionAttributeNames: {'#a': 'currChallenges'},
-					ExpressionAttributeValues: { ':x' : $scope.child.currChallenges,},
-		});	
-		$state.go('tabsController.missions',{}, {reload: true});	
+		$scope.$storage.child.currChallenges.push($stateParams.mission.challengeId);
+		console.log($scope.$storage.child.currChallenges)
+		// DBClientFactory.updateItem({	
+				// TableName: 'child',
+				// Key: { 'childId': $scope.$storage.child.childId },
+					// UpdateExpression: 'set #a = :x',
+					// ExpressionAttributeNames: {'#a': 'currChallenges'},
+					// ExpressionAttributeValues: { ':x' : $scope.$storage.child.currChallenges,},
+		// });	
+		// $state.go('tabsController.missions',{}, {reload: true});	
 	}
 	
+	$scope.submitMission = function() {
+		console.log('submit')
+	}
+	
+	$scope.cancelMission = function() {
+		var chal = $scope.$storage.child.currChallenges;
+		console.log(chal);
+		var temp = [];
+		for(var i=0;i<chal.length;i++) {
+			if(chal[i] != $scope.mission.Id) {
+				temp.push(chal[i]);
+			}
+		}
+		$scope.add('currentChallenges',temp);
+		console.log($scope.$storage.currentChallenges);
+		// DBClientFactory.updateItem({	
+			// TableName: 'child',
+			// Key: { 'childId': $scope.$storage.child.childId },
+				// UpdateExpression: 'set #a = :x',
+				// ExpressionAttributeNames: {'#a': 'currChallenges'},
+				// ExpressionAttributeValues: { ':x' : temp,},
+		// });	
+		// $state.go('tabsController.missions',{}, {reload: true});
+
+	}
+
 	function getUserFromLocalStorage(){
     awsCognitoIdentityFactory.getUserFromLocalStorage(function(err, isValid) {
         if(err) {

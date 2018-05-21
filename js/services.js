@@ -8,7 +8,6 @@ $localStorage = $localStorage.$default({
 	challenges: [],
 	currentChallenges: 	 [],
 	completedChallenges: [],
-	canceledChallenges:	 [],
 	
 });
 	
@@ -20,8 +19,7 @@ var _reset = function () {
 	$localStorage.children= 			{},
 	$localStorage.challenges= 			[],
 	$localStorage.currentChallenges= 	[],
-	$localStorage.completedChallenges= 	[],
-	$localStorage.canceledChallenges=	[];
+	$localStorage.completedChallenges= 	[];
 }
 
 return {
