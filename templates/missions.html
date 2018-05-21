@@ -1,22 +1,19 @@
-<ion-view title="Missions" hide-nav-bar="true" hide-back-button="true" id="page2" style="background-color:#FAFAFA;" ng-init="setupLogin()">
+<ion-view title="Missions" hide-nav-bar="false" id="page2" style="background-color:#FAFAFA;" ng-init="setupLogin()">
   <ion-content padding="true" class="manual-ios-statusbar-padding">
     <ion-list id="missions-list3">
       <ion-item class="item-divider" id="missions-list-item-divider4"> Missions I've Accepted</ion-item>
-	  <ion-item ng-repeat="chal in currChallenges|orderBy: 'challengeId'" ng-click="selectMission(mission)">
-		{{chal.challengeName}}
-		</ion-item> 
+	  <ion-item ng-repeat="mission in currChallenges|orderBy: 'challengeId'" ng-click="selectMission(mission,1)">
+		{{mission.challengeName}}
+		</ion-item>
       <ion-item class="item-divider" id="missions-list-item-divider6"> Missions I've Completed</ion-item>
-      <ion-item ng-repeat="chal in complChallenges|orderBy: 'challengeId'" ng-click="selectMission(mission)">
-		{{chal.challengeName}}
+      <ion-item ng-repeat="mission in complChallenges|orderBy: 'challengeId'" ng-click="selectMission(mission,2)">
+		{{mission.challengeName}}
 		</ion-item> 
-	  <ion-item class="item-divider" id="missions-list-item-divider7"> Inactive Missions</ion-item>
-	  <ion-item ng-repeat="chal in disChallenges|orderBy: 'challengeId'" ng-click="selectMission(mission)">
-		{{chal.challengeName}}
-		</ion-item> 
+
     </ion-list>
     <div class="spacer" style="width: 300px;"></div>
     <div style="margin-right:-20px;">
-      <a ui-sref="acceptAMission()" id="missions-button18" style="left:-10px;" class="button button-balanced button-full icon ion-android-add"> Add a Mission</a>
+      <a ui-sref="addMission()" id="missions-button18" style="left:-10px;" class="button button-balanced button-full icon ion-android-add"> Add a Mission</a>
     </div>
   </ion-content>
 </ion-view>

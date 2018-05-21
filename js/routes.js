@@ -19,6 +19,7 @@ angular.module('app.routes', [])
     },
 	params: {
 		mission: {},
+		type: '',
 	},
   })
 
@@ -71,6 +72,7 @@ angular.module('app.routes', [])
     },
 	params: {
 		mission: {},
+		type: '',
 	},
   })
 
