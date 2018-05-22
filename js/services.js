@@ -5,10 +5,12 @@ angular.module('app.services', ['ngStorage'])
 $localStorage = $localStorage.$default({
 	child: {},
 	children: {},
+	mission: {},
+	missionType: {},
 	challenges: [],
+	availableChallenges: [],
 	currentChallenges: 	 [],
 	completedChallenges: [],
-	
 });
 	
 var	_getAll = function () 	   {  return $localStorage; }
@@ -17,7 +19,10 @@ var _remove = function (thing) { $localStorage.things.splice($localStorage.thing
 var _reset = function () {
 	$localStorage.child= 				{},
 	$localStorage.children= 			{},
+	$localStorage.mission=				{},
+	$localStorage.missionType=			{},
 	$localStorage.challenges= 			[],
+	$localStorage.availableChallenges=	[],
 	$localStorage.currentChallenges= 	[],
 	$localStorage.completedChallenges= 	[];
 }
