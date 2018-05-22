@@ -1,0 +1,8 @@
+Need to finish:
+- Submit a Mission
+- Pictures for Mission
+- Cancel a Mission
+- Badges
+- Awarding Badges
+- How points work on badges
+- Fix Reload issues on Mission/ChildSelect/LogoutChild

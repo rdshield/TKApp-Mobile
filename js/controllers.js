@@ -253,6 +253,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	
 	$scope.getChallenges = function() {
 		DBClientFactory.readItems('challenges').then( function(result) {
+			console.log($scope.$storage);
 			var $redo= (($scope.$storage.currentChallenges.length==0)&&($scope.$storage.completedChallenges.length==0))
 			if($redo) {
 				$scope.add('challenges',result.Items); 
@@ -260,7 +261,6 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 				$scope.add('completedChallenges', ($scope.$storage.child.complChallenges) );
 				
 				var currChallenges = [];
-				var complChallenges = [];
 				currLength = $scope.$storage.currentChallenges.length;
 				for(var i=0; i<currLength; i++) {
 					var result = $scope.$storage.challenges.filter(function( obj ) { return obj.challengeId == $scope.$storage.currentChallenges[i] });
@@ -269,8 +269,10 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 						currChallenges.push(result[0]);
 					}
 				}
-				currLength = $scope.$storage.completedChallenges.length;
-				for(var i=0; i<currLength; i++) {
+				
+				var complChallenges = [];
+				compLength = $scope.$storage.completedChallenges.length;
+				for(var i=0; i<compLength; i++) {
 					var result = $scope.$storage.challenges.filter(function( obj ) { return obj.challengeId == $scope.$storage.completedChallenges[i] });
 					if(result.length != 0) {
 						//console.log(result);
