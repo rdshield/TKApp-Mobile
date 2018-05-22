@@ -146,7 +146,6 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	$scope.error = { message: null};
 
 	$scope.$on('$stateChangeSuccess', function() {
-		
 		$scope.getChildren();
 	});
 
@@ -163,9 +162,6 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 
 	$scope.selectChild = function(child) {
 		$scope.add('child', child);
-		$scope.add('currentChallenges', (child.currChallenges) );
-		$scope.add('completedChallenges', child.complChallenges );
-		$scope.add('canceledChallenges', child.disChallenges);
 		$state.go('tabsController.missions',{}, {});
 	}
 
@@ -231,7 +227,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 					ExpressionAttributeNames: {'#a': 'userCount'},
 					ExpressionAttributeValues: { ':x' : childCount,},
 			});
-			$state.go("select_Child", {}, {});
+			$state.go("select_Child", {}, {reload:true});
 		});
 
 	}
@@ -244,9 +240,6 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory, StorageService) {
 	$scope.$storage = StorageService.getAll();
 	$scope.add = function (key, thing) { StorageService.add(key, thing); };
-	$scope.currChallenges = [];
-	$scope.complChallenges = [];
-	$scope.disChallenges = [];
 	
 	$scope.setupLogin = function() {
 		getUserFromLocalStorage();
@@ -261,21 +254,21 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	$scope.getChallenges = function() {
 		DBClientFactory.readItems('challenges').then( function(result) 
 		{
-			var $redo= (($scope.currChallenges.length==0)&&($scope.complChallenges.length==0)&&($scope.disChallenges.length==0))
+			var $redo= (($scope.$storage.currentChallenges.length==0)&&($scope.$storage.completedChallenges.length==0))
 			if($redo) {
 				$scope.add('challenges',result.Items); 
-				$scope.currChallenges = [];
-				$scope.complChallenges = [];
-				$scope.disChallenges = [];
-				//console.log($scope.$storage.challenges);
-				//console.log($scope.$storage);
+				$scope.add('currentChallenges', ($scope.$storage.child.currChallenges) );
+				$scope.add('completedChallenges', ($scope.$storage.child.complChallenges) );
+				
+				var currChallenges = [];
+				var complChallenges = [];
 					
 				currLength = $scope.$storage.currentChallenges.length;
 				for(var i=0; i<currLength; i++) {
 					var result = $scope.$storage.challenges.filter(function( obj ) { return obj.challengeId == $scope.$storage.currentChallenges[i] });
 					if(result.length != 0) {
 						//console.log(result);
-						$scope.currChallenges.push(result[0]);
+						currChallenges.push(result[0]);
 					}
 				}
 				currLength = $scope.$storage.completedChallenges.length;
@@ -283,25 +276,19 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 					var result = $scope.$storage.challenges.filter(function( obj ) { return obj.challengeId == $scope.$storage.completedChallenges[i] });
 					if(result.length != 0) {
 						//console.log(result);
-						$scope.complChallenges.push(result[0]);
+						complChallenges.push(result[0]);
 					}
 				}
+				$scope.add("currentChallenges",currChallenges);
+				$scope.add("completedChallenges",complChallenges);
 				$state.go('tabsController.missions',{},{reload:true});
-			} else { }
-			
+			}
 		});
-	}
-
-	$scope.clearList = function() {
-		$scope.currChallenges = [];
-		$scope.complChallenges = [];
-		$scope.disChallenges = [];
 	}
 	
 	$scope.selectMission = function(mission,type) {
 		$state.go('tabsController.missionBriefing',{mission,type}, {reload:true});
 	}
-
 
 	function getUserFromLocalStorage(){
 		awsCognitoIdentityFactory.getUserFromLocalStorage(function(err, isValid) {
@@ -377,15 +364,17 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 
 	$scope.acceptMission = function() {
 		$scope.$storage.child.currChallenges.push($stateParams.mission.challengeId);
-		console.log($scope.$storage.child.currChallenges)
-		// DBClientFactory.updateItem({	
-				// TableName: 'child',
-				// Key: { 'childId': $scope.$storage.child.childId },
-					// UpdateExpression: 'set #a = :x',
-					// ExpressionAttributeNames: {'#a': 'currChallenges'},
-					// ExpressionAttributeValues: { ':x' : $scope.$storage.child.currChallenges,},
-		// });	
-		// $state.go('tabsController.missions',{}, {reload: true});	
+		var temp = $scope.$storage.currentChallenges;
+		temp.push($stateParams.mission);
+		$scope.add('currentChallenges',temp);
+		DBClientFactory.updateItem({	
+				TableName: 'child',
+				Key: { 'childId': $scope.$storage.child.childId },
+					UpdateExpression: 'set #a = :x',
+					ExpressionAttributeNames: {'#a': 'currChallenges'},
+					ExpressionAttributeValues: { ':x' : $scope.$storage.child.currChallenges,},
+		});	
+		$state.go('tabsController.missions',{}, {reload: true});	
 	}
 	
 	$scope.submitMission = function() {
@@ -396,21 +385,23 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 		var chal = $scope.$storage.child.currChallenges;
 		console.log(chal);
 		var temp = [];
+		var curr = [];
 		for(var i=0;i<chal.length;i++) {
-			if(chal[i] != $scope.mission.Id) {
-				temp.push(chal[i]);
+			if(chal[i].challengeId != $scope.mission.Id) {
+				temp.push(chal[i].challengeId);
+				curr.push(chal[i])
 			}
 		}
-		$scope.add('currentChallenges',temp);
+		$scope.add('currentChallenges',curr);
 		console.log($scope.$storage.currentChallenges);
-		// DBClientFactory.updateItem({	
-			// TableName: 'child',
-			// Key: { 'childId': $scope.$storage.child.childId },
-				// UpdateExpression: 'set #a = :x',
-				// ExpressionAttributeNames: {'#a': 'currChallenges'},
-				// ExpressionAttributeValues: { ':x' : temp,},
-		// });	
-		// $state.go('tabsController.missions',{}, {reload: true});
+		DBClientFactory.updateItem({	
+			TableName: 'child',
+			Key: { 'childId': $scope.$storage.child.childId },
+				UpdateExpression: 'set #a = :x',
+				ExpressionAttributeNames: {'#a': 'currChallenges'},
+				ExpressionAttributeValues: { ':x' : temp,},
+		});	
+		$state.go('tabsController.missions',{}, {reload: true});
 
 	}
 
