@@ -10,8 +10,10 @@ Need to finish:
 - points tracking
 - Back arrows
 - Badges
+- Remove un-necessary passed in variables
 - Awarding Badges
 - How points work on badges
 - Fix Reload issues on LogoutChild
 
+Optional:
 - Show if badge will be earned on Mission Briefing
