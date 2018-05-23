@@ -11,7 +11,12 @@
 	  <br>
 	  <p style="color:#000000;" ng-model="mission.Desc">{{$storage.mission.challengeDesc}}</p>
 	  <br>
-    </div>
+	  <p style="color:red;"><b> Reward: {{$storage.mission.value}} points 
+	  
+	  </b>
+	  </p>
+	  <br>
+	</div>
     <button id="missionBriefing-button5" ng-if="$storage.missionType == 0" class="button button-balanced button-block" ng-click="acceptMission()">Accept this Mission!</button>
 	<button id="missionBriefing-button5" ng-if="$storage.missionType == 1" class="button button-balanced button-block" ng-click="submitMission()">Complete this Mission!</button>
 	<button id="missionBriefing-button5" ng-if="$storage.missionType == 1" class="button button-assertive button-block" ng-click="cancelMission()">Cancel this Mission</button>

@@ -1,8 +1,17 @@
 Need to finish:
-- Submit a Mission
+<Web App>
 - Pictures for Mission
-- Cancel a Mission
+- Loading Badges on Categories
+- Point Values
+
+<Mobile App>
+- CATEGORY MAPPING TO POINTS ARRAY!!!
+- Transitions (Make it Flashy)
+- points tracking
+- Back arrows
 - Badges
 - Awarding Badges
 - How points work on badges
-- Fix Reload issues on Mission/ChildSelect/LogoutChild
+- Fix Reload issues on LogoutChild
+
+- Show if badge will be earned on Mission Briefing
