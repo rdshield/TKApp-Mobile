@@ -234,6 +234,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	}
 	
 	$scope.getChallenges = function() {
+		console.log($scope.$storage);
 		DBClientFactory.readItems('challengeCategory').then( function(result) {
 			$scope.add('categories',result.Items);
 		})
@@ -313,6 +314,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 		var idArray = $scope.$storage.currentChallenges.map(function (el) { return el.challengeId; });
 		for(var i=0;i<length;i++) {
 			if($scope.$storage.challenges[i].isActive && (idArray.indexOf($scope.$storage.challenges[i].challengeId) == -1)) {
+				console.log($scope.$storage.challenges[i])
 				$scope.$storage.availableChallenges.push($scope.$storage.challenges[i]);
 			}
 		}
@@ -351,19 +353,23 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 		console.log($scope.$storage);
 		$scope.$storage.child.currChallenges.push($scope.$storage.mission.challengeId);
 		$scope.$storage.currentChallenges.push($scope.$storage.mission);
-		$scope.$storage.availableChallenges.pop($scope.$storage.availableChallenges.indexOf($scope.$storage.mission))
-		DBClientFactory.updateItem({	
-				TableName: 'child',
-				Key: { 'childId': $scope.$storage.child.childId },
-					UpdateExpression: 'set #a = :x',
-					ExpressionAttributeNames: {'#a': 'currChallenges'},
-					ExpressionAttributeValues: { ':x' : $scope.$storage.child.currChallenges,},
-		});
+		console.log($scope.$storage.mission)
+		console.log($scope.$storage.availableChallenges.indexOf($scope.$storage.mission))
+		console.log($scope.$storage.availableChallenges[($scope.$storage.availableChallenges.indexOf($scope.$storage.mission))])
+		console.log($scope.$storage.availableChallenges[0])
+		$scope.$storage.availableChallenges.splice($scope.$storage.availableChallenges.indexOf($scope.$storage.mission),1)
+		// DBClientFactory.updateItem({	
+				// TableName: 'child',
+				// Key: { 'childId': $scope.$storage.child.childId },
+					// UpdateExpression: 'set #a = :x',
+					// ExpressionAttributeNames: {'#a': 'currChallenges'},
+					// ExpressionAttributeValues: { ':x' : $scope.$storage.child.currChallenges,},
+		// });
+		console.log($scope.$storage.availableChallenges);
 		$state.go('tabsController.missions',{}, {reload: true});	
 	}
 	
 	$scope.submitMission = function() {
-		//console.log('submit')
 		var temp = $scope.$storage.child.complChallenges;
 		temp.unshift($scope.$storage.mission.challengeId);
 		if(temp.length > 5) { temp.pop(); }
@@ -374,6 +380,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 		if(d<10) { d= '0' + d};
 		if(m<10) { m= '0' + m};
 		today = m + '/' + d + '/' + y;
+		$scope.cancelMission();
 		compMission = $scope.$storage.mission;
 		compMission.completeDate = today;
 		$scope.$storage.completedChallenges.unshift(compMission);
@@ -382,14 +389,13 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 		}
 		$scope.$storage.child.points[$scope.$storage.mission.categoryId-1] = $scope.$storage.child.points[$scope.$storage.mission.categoryId-1] + compMission.value;
 		
-		DBClientFactory.updateItem({	
-			TableName: 'child',
-			Key: { 'childId': $scope.$storage.child.childId },
-				UpdateExpression: 'set #a = :x',
-				ExpressionAttributeNames: {'#a': 'complChallenges'},
-				ExpressionAttributeValues: { ':x' : temp,},
-		});
-		$scope.cancelMission();
+		// DBClientFactory.updateItem({	
+			// TableName: 'child',
+			// Key: { 'childId': $scope.$storage.child.childId },
+				// UpdateExpression: 'set #a = :x',
+				// ExpressionAttributeNames: {'#a': 'complChallenges'},
+				// ExpressionAttributeValues: { ':x' : temp,},
+		// });
 	}
 	
 	$scope.cancelMission = function() {
@@ -398,6 +404,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 		var curr = [];
 		for(var i=0;i<chal.length;i++) {
 			if(chal[i].challengeId != $scope.$storage.mission.challengeId) {
+				console.log(chal[i])
 				temp.push(chal[i].challengeId);
 				curr.push(chal[i]);
 			}	
@@ -405,13 +412,13 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 		$scope.add('currentChallenges',curr);
 		$scope.$storage.child.currChallenges = temp;
 		$scope.$storage.availableChallenges.push($scope.$storage.mission);
-		DBClientFactory.updateItem({	
-			TableName: 'child',
-			Key: { 'childId': $scope.$storage.child.childId },
-				UpdateExpression: 'set #a = :x',
-				ExpressionAttributeNames: {'#a': 'currChallenges'},
-				ExpressionAttributeValues: { ':x' : temp,},
-		});	
+		// DBClientFactory.updateItem({	
+			// TableName: 'child',
+			// Key: { 'childId': $scope.$storage.child.childId },
+				// UpdateExpression: 'set #a = :x',
+				// ExpressionAttributeNames: {'#a': 'currChallenges'},
+				// ExpressionAttributeValues: { ':x' : temp,},
+		// });	
 		$state.go('tabsController.missions',{}, {reload: true});
 
 	}

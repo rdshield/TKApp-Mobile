@@ -2,8 +2,8 @@
   <ion-content padding="true" class="manual-ios-statusbar-padding">
     <h3 id="acceptAMission-heading2" style="color:#000000;text-align:center;"></h3>
 	<ion-item ng-if="$storage.availableChallenges.length <= 0" style="text-align:center;">No New Missions.. Complete your current missions to unlock more missions! </ion-item>
-		<ion-item ng-repeat="chal in $storage.availableChallenges|orderBy: 'category'"  ng-click="selectMission(chal)">
-			{{chal.category}} - {{chal.challengeName}}
+		<ion-item ng-repeat="chal in $storage.availableChallenges|orderBy: 'categoryId'"  ng-click="selectMission(chal)">
+			{{chal.categoryId}} - {{chal.challengeName}}
 		</ion-item>
   </ion-content>
 </ion-view>
