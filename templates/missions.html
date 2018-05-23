@@ -5,9 +5,9 @@
 	  <ion-item ng-repeat="mission in $storage.currentChallenges|orderBy: 'challengeId'" ng-click="selectMission(mission,1)">
 		{{mission.challengeName}}
 		</ion-item>
-      <ion-item class="item-divider" id="missions-list-item-divider6"> Missions I've Completed</ion-item>
-      <ion-item ng-repeat="mission in $storage.completedChallenge | track by mission.id" ng-click="selectMission(mission,2)">
-		{{mission.challengeName}}
+      <ion-item class="item-divider" id="missions-list-item-divider6"> Missions I've Completed Recently</ion-item>
+      <ion-item ng-repeat="mission in $storage.completedChallenges track by $index" ng-click="selectMission(mission,2)">
+		{{$index}} - {{mission.challengeName}} - <i>Last Completed on: <b>{{mission.completeDate}}</b></i>
 		</ion-item> 
 
     </ion-list>

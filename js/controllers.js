@@ -275,7 +275,14 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 				for(var i=0; i<compLength; i++) {
 					var result = $scope.$storage.challenges.filter(function( obj ) { return obj.challengeId == $scope.$storage.completedChallenges[i] });
 					if(result.length != 0) {
-						//console.log(result);
+						var today = new Date();
+						var d= today.getDate();
+						var m= today.getMonth()+1;
+						var y= today.getFullYear();
+						if(d<10) { d= '0' + d};
+						if(m<10) { m= '0' + m};
+						today = m + '/' + d + '/' + y;
+						result[0].completeDate = today;
 						complChallenges.push(result[0]);
 					}
 				}
@@ -377,7 +384,9 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	}
 	
 	$scope.submitMission = function() {
-		console.log('submit')
+		//console.log('submit')
+		
+		$scope.cancelMission();
 	}
 	
 	$scope.cancelMission = function() {
