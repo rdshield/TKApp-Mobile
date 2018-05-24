@@ -1,13 +1,7 @@
 angular.module('app.routes', [])
 
 .config(function($stateProvider, $urlRouterProvider) {
-
-  // Ionic uses AngularUI Router which uses the concept of states
-  // Learn more here: https://github.com/angular-ui/ui-router
-  // Set up the various states which the app can be in.
-  // Each state's controller can be found in controllers.js
   $stateProvider
-    
 
   .state('tabsController.missions', {
     url: '/page2',
@@ -62,14 +56,10 @@ angular.module('app.routes', [])
     controller: 'loginCtrl',
   })
 
-  .state('tabsController.missionBriefing', {
+  .state('missionBriefing', {
     url: '/page9',
-    views: {
-      'tab1': {
-        templateUrl: 'templates/missionBriefing.html',
-        controller: 'missionBriefingCtrl'
-      }
-    },
+	templateUrl: 'templates/missionBriefing.html',
+    controller: 'missionBriefingCtrl',
 	params: {
 		mission: {},
 		type: '',

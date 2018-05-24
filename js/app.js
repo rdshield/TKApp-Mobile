@@ -1,4 +1,4 @@
-angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.directives','app.services','ngStorage'])
+angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.services','ngStorage'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
