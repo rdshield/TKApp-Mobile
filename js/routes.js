@@ -4,6 +4,7 @@ angular.module('app.routes', [])
   $stateProvider
 
   .state('tabsController.missions', {
+	cache: false,
     url: '/page2',
     views: {
       'tab1': {
@@ -57,6 +58,7 @@ angular.module('app.routes', [])
   })
 
   .state('missionBriefing', {
+	cache: false,
     url: '/page9',
 	templateUrl: 'templates/missionBriefing.html',
     controller: 'missionBriefingCtrl',
@@ -104,6 +106,7 @@ angular.module('app.routes', [])
   })
   	
   .state('addMission', {
+	cache: false,
     url: '/missionAccept',
     templateUrl: 'templates/addMission.html',
     controller: 'addMission',

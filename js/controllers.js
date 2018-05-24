@@ -327,7 +327,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	$scope.selectMission = function(mission) {
 		$scope.add('mission',mission);
 		$scope.add('missionType',0);
-		$state.go('missionBriefing',{}, {});
+		$state.go('missionBriefing',{}, {reload:true});
 	}
 
 	function getUserFromLocalStorage(){
