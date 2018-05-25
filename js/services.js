@@ -8,6 +8,7 @@ $localStorage = $localStorage.$default({
 	mission: {},
 	missionType: {},
 	categories: [],
+	catLevels:  [],
 	challenges: [],
 	availableChallenges: [],
 	currentChallenges: 	 [],
@@ -25,6 +26,7 @@ var _reset = function () {
 	$localStorage.currentChallenges= 	[],
 	$localStorage.completedChallenges= 	[];
 	$localStorage.categories= 			[];
+	$localStorage.catLevels=			[];
 }
 
 return {
