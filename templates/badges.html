@@ -1,7 +1,7 @@
 <ion-view title="Badges" id="page4">
   <ion-content padding="true" class="has-header">
-    <ion-item ng-repeat="mission in $storage.completedChallenges track by $index" ng-click="selectMission(mission,2)">
-		{{mission.challengeName}} - <i>Completed: <b>{{mission.completeDate}}</b></i>
+    <ion-item ng-repeat="badge in $storage.possibleBadges">
+		{{mission.badgeId}} - {{mission.address}}
 	</ion-item> 
   </ion-content>
 </ion-view>

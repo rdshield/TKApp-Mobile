@@ -12,6 +12,8 @@ $localStorage = $localStorage.$default({
 	availableChallenges: [],
 	currentChallenges: 	 [],
 	completedChallenges: [],
+	possibleBadges: 	 [],
+	badges: [],
 });
 	
 var	_getAll = function () 	   {  return $localStorage; }
@@ -24,7 +26,9 @@ var _reset = function () {
 	$localStorage.availableChallenges=	[],
 	$localStorage.currentChallenges= 	[],
 	$localStorage.completedChallenges= 	[],
-	$localStorage.categories= 			[];
+	$localStorage.categories= 			[],
+	$localStorage.possibleBadges= 		[],
+	$localStorage.badges=				[];
 }
 
 return {

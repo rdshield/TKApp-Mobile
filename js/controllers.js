@@ -245,6 +245,21 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 			$scope.add('categories', a);
 		});
 		
+		DBClientFactory.readItems('missionBadges').then( function(result) {
+			function compare(a,b){
+				comparison = 0;
+				if (a.badgeId > b.badgeId) {
+					comparison = 1;
+				} else if (b.badgeId > a.badgeId) {
+					comparison = -1;
+				}
+				return comparison;
+			};
+			var a = result.Items.sort(compare);
+			$scope.add('possibleBadges', a);
+		});
+		
+		
 		DBClientFactory.readItems('challenges').then( function(result) {
 			var $redo= (($scope.$storage.currentChallenges.length==0)&&($scope.$storage.completedChallenges.length==0))
 			if($redo) {
@@ -279,10 +294,27 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 				}
 				$scope.add("currentChallenges",currChallenges);
 				$scope.add("completedChallenges",complChallenges);
-				console.log($scope.$storage);
 				$state.go('tabsController.missions',{},{reload:true});
 			}
+			$scope.getBadges();
 		});
+		
+	}
+	
+	$scope.getBadges = function(){	
+		$points = $scope.$storage.child.points;	
+		$badgeCount = $scope.$storage.child.badges;
+		$categories = $scope.$storage.categories;
+		
+		result = [];
+		for(var i=0;i<$badgeCount.length;i++) {
+			if($badgeCount[i] > 0) {
+				for(var j=0;j<$badgeCount[i];j++) {
+					result.push(badgeIds = $categories[i].badges[j]);
+				}
+			}
+		}
+		$scope.add('badges',result);
 	}
 	
 	$scope.selectMission = function(mission,type) {
@@ -365,13 +397,13 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 		$scope.$storage.child.currChallenges.push($scope.$storage.mission.challengeId);
 		$scope.$storage.currentChallenges.push($scope.$storage.mission);
 		$scope.$storage.availableChallenges.splice($scope.$storage.availableChallenges.indexOf($scope.$storage.mission),1)
-		// DBClientFactory.updateItem({	
-				// TableName: 'child',
-				// Key: { 'childId': $scope.$storage.child.childId },
-					// UpdateExpression: 'set #a = :x',
-					// ExpressionAttributeNames: {'#a': 'currChallenges'},
-					// ExpressionAttributeValues: { ':x' : $scope.$storage.child.currChallenges,},
-		// });
+		DBClientFactory.updateItem({	
+				TableName: 'child',
+				Key: { 'childId': $scope.$storage.child.childId },
+					UpdateExpression: 'set #a = :x',
+					ExpressionAttributeNames: {'#a': 'currChallenges'},
+					ExpressionAttributeValues: { ':x' : $scope.$storage.child.currChallenges,},
+		});
 		$state.go('tabsController.missions',{}, {reload: true,});	
 	}
 	
@@ -430,24 +462,19 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	}
 	
 	$scope.getBadges = function(){	
-		console.log($scope.$storage);
 		$points = $scope.$storage.child.points;	
-		$badges = $scope.$storage.child.badges;
-		for(var i=0;i<$badges.length;i++) {
-			console.log('Childs Points: ' + $points[i]);
-			console.log($badges[i]);
+		$badgeCount = $scope.$storage.child.badges;
+		$categories = $scope.$storage.categories;
+		
+		result = [];
+		for(var i=0;i<$badgeCount.length;i++) {
+			if($badgeCount[i] > 0) {
+				for(var j=0;j<$badgeCount[i];j++) {
+					result.push(badgeIds = $categories[i].badges[j]);
+				}
+			}
 		}
-			// var results = [];
-			// for(var i=0;i<$scope.$storage.categories;i++){
-				// for(var j=0;j<$scope.$storage.catLevels[i];j++) {
-					// if($scope.$storage.child.badges[$scope.$storage.mission.categoryId-1]>$scope.$storage.catLevels[i][j]) {
-						// console.log('A');
-					// }
-				// }
-			// }
-			// console.log($scope.$storage.child.badges[i])
-			
-		// }
+		$scope.add('badges',result);
 	}
 	
 	$scope.cancelMission = function() {
@@ -504,9 +531,10 @@ function ($scope, $state, $stateParams, awsCognitoIdentityFactory, StorageServic
 
 }])
    
-.controller('badgesCtrl', ['$scope', '$stateParams', 
+.controller('badgesCtrl', ['$scope', '$stateParams', 'StorageService',
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams) {
+function ($scope, $stateParams, StorageService) {
+	console.log($scope.$storage)
 
 
 }])
