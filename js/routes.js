@@ -69,6 +69,7 @@ angular.module('app.routes', [])
   })
 
   .state('select_Child', {
+	  cache: false,
     url: '/',
     templateUrl: 'templates/select_Child.html',
     controller: 'select_ChildCtrl',

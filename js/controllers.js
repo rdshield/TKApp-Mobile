@@ -1,4 +1,4 @@
-angular.module('app.controllers', ['aws.cognito.identity', 'DBClient', 'ngMessages', ])
+angular.module('app.controllers', ['aws.cognito.identity', 'DBClient', 'ngMessages', 'ionic' ])
 
 .controller('loginCtrl', ['$scope','$state', '$stateParams', 'awsCognitoIdentityFactory','StorageService',
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
@@ -307,6 +307,10 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	$scope.add = function (key, thing) { StorageService.add(key, thing); };
 	$scope.challenges= [];
 
+	$scope.goBack = function(){
+		$state.go('tabsController.missions',{}, {reload:true});
+	};
+	
 	$scope.setupChallenges = function() {
 		getUserFromLocalStorage();
 		$scope.child = AWS.config.child;
@@ -344,10 +348,14 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 .controller('missionBriefingCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', 'DBClientFactory','StorageService', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory, StorageService) {
+function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory, StorageService, $ionicHistory) {
 	$scope.$storage = StorageService.getAll();
 	$scope.add = function (key, thing) { StorageService.add(key, thing); };
 
+	$scope.goBack = function(){
+		if ($scope.$storage.missionType==0) { $state.go('addMission',{}, {reload:true}); }
+		else { $state.go('tabsController.missions',{}, {reload:true}); }
+	};
 	$scope.setupMissionView = function() {
 		getUserFromLocalStorage();
 		$scope.child = AWS.config.child;
@@ -473,7 +481,7 @@ function ($scope, $stateParams) {
     
 
 }])
-  
+
 .controller('challenge_SubmittedCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName

@@ -1,6 +1,11 @@
-<ion-view title="Mission Briefing" hide-back-button="false" id="page9" ng-init="setupMissionView()">
+<ion-view title="Mission Briefing" hide-back-button="true" id="page9" ng-init="setupMissionView()">
+  <ion-nav-buttons side="left">
+	<button class="button back-button buttons button-clear header-item" ng-click="goBack()">
+		<i class="icon ion-ios-arrow-back"> Back </i> 
+	</button>
+  </ion-nav-buttons>
   <ion-content padding="true" class="has-header">
-    <h4 id="missionBriefing-heading2" ng-if="$storage.mission.challengeName" " style="color:#000000;" ng-model="mission.Name"> {{$storage.mission.challengeName}} </h4>
+	<h4 id="missionBriefing-heading2" ng-if="$storage.mission.challengeName" " style="color:#000000;" ng-model="mission.Name"> {{$storage.mission.challengeName}} </h4>
     <div style="margin: 0px; line-height: 250px; background-color: rgb(232, 235, 239); text-align: center;">
       <i class="icon ion-image" style="font-size: 64px; color: rgb(136, 136, 136); vertical-align: middle;" ng-model="mission.pic"></i>
     </div>
