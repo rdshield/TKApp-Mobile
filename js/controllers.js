@@ -432,21 +432,21 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 		
 	}
 	
-	$scope.getBadges = function(){
+	// $scope.getBadges = function(){
 			
-		for(var i=0;i<$scope.$storage.child.badges.length;i++) {
-			var results = [];
-			for(var i=0;i<$scope.$storage.categories;i++){
-				for(var j=0;j<$scope.$storage.catLevels[i];j++) {
-					if($scope.$storage.child.badges[$scope.$storage.mission.categoryId-1]>$scope.$storage.catLevels[i][j]) {
-						console.log('A');
-					}
-				}
-			}
-			console.log($scope.$storage.child.badges[i])
+		// for(var i=0;i<$scope.$storage.child.badges.length;i++) {
+			// var results = [];
+			// for(var i=0;i<$scope.$storage.categories;i++){
+				// for(var j=0;j<$scope.$storage.catLevels[i];j++) {
+					// if($scope.$storage.child.badges[$scope.$storage.mission.categoryId-1]>$scope.$storage.catLevels[i][j]) {
+						// console.log('A');
+					// }
+				// }
+			// }
+			// console.log($scope.$storage.child.badges[i])
 			
-		}
-	}
+		// }
+	// }
 	
 	$scope.cancelMission = function() {
 		chal = $scope.$storage.currentChallenges;
