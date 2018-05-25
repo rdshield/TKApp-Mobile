@@ -45,12 +45,6 @@ angular.module('app.routes', [])
     abstract:true
   })
 
-  .state('welcome', {
-    url: '/welcome',
-    templateUrl: 'templates/welcome.html',
-    controller: 'welcomeCtrl'
-  })
-
   .state('login', {
     url: '/Login',
     templateUrl: 'templates/login.html',

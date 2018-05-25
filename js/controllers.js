@@ -243,17 +243,6 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 			};
 			var a = result.Items.sort(compare);
 			$scope.add('categories', a);
-			
-			var pointsLvl = [];
-			for(var i=0; i<a.length; i++) {
-				var $pointLevels = [];
-				Object.keys(a[i].badgeInfo).forEach(key => {
-					$pointLevels.push(key);
-				});
-				pointsLvl.push($pointLevels);
-			}				
-			$scope.add('catLevels',pointsLvl);
-			console.log($scope.$storage);
 		});
 		
 		DBClientFactory.readItems('challenges').then( function(result) {
@@ -290,6 +279,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 				}
 				$scope.add("currentChallenges",currChallenges);
 				$scope.add("completedChallenges",complChallenges);
+				console.log($scope.$storage);
 				$state.go('tabsController.missions',{},{reload:true});
 			}
 		});
@@ -356,17 +346,16 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
     }			
 }])
 
-.controller('missionBriefingCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', 'DBClientFactory','StorageService', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
+.controller('missionBriefingCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', 'DBClientFactory','StorageService', 
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory, StorageService, $ionicHistory) {
 	$scope.$storage = StorageService.getAll();
 	$scope.add = function (key, thing) { StorageService.add(key, thing); };
-
 	$scope.goBack = function(){
 		if ($scope.$storage.missionType==0) { $state.go('addMission',{}, {reload:true}); }
 		else { $state.go('tabsController.missions',{}, {reload:true}); }
 	};
+	
 	$scope.setupMissionView = function() {
 		getUserFromLocalStorage();
 		$scope.child = AWS.config.child;
@@ -404,37 +393,50 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 		if($scope.$storage.completedChallenges.length > 5) {
 			$scope.$storage.completedChallenges.pop();
 		}
-		// DBClientFactory.updateItem({	
-			// TableName: 'child',
-			// Key: { 'childId': $scope.$storage.child.childId },
-				// UpdateExpression: 'set #a = :x',
-				// ExpressionAttributeNames: {'#a': 'complChallenges'},
-				// ExpressionAttributeValues: { ':x' : temp,},
-		// });
+		DBClientFactory.updateItem({	
+			TableName: 'child',
+			Key: { 'childId': $scope.$storage.child.childId },
+				UpdateExpression: 'set #a = :x',
+				ExpressionAttributeNames: {'#a': 'complChallenges'},
+				ExpressionAttributeValues: { ':x' : temp,},
+		});
 		var $points = $scope.$storage.child.points;
-		$points[$scope.$storage.mission.categoryId-1] = $points[$scope.$storage.mission.categoryId-1] + compMission.value;
-		var $pointLevels = $scope.$storage.catLevels;
-		for(var i=0;i<$pointLevels[$scope.$storage.mission.categoryId-1].length;i++) {
-			console.log($points[$scope.$storage.mission.categoryId-1])
-			console.log($pointLevels[$scope.$storage.mission.categoryId-1][i]);
-			if($points[$scope.$storage.mission.categoryId-1]>=$pointLevels[$scope.$storage.mission.categoryId-1][i]) {
-				$scope.$storage.child.badges = $pointLevels[$scope.$storage.mission.categoryId-1][i];
-			}
-		}	
-		$scope.getBadges();
-		// DBClientFactory.updateItem({	
-			// TableName: 'child',
-			// Key: { 'childId': $scope.$storage.child.childId },
-				// UpdateExpression: 'set #a = :x; set #b = :y',
-				// ExpressionAttributeNames: {'#a': 'points', '#b': 'badges',},
-				// ExpressionAttributeValues: { ':x' : $scope.$storage.child.points[$scope.$storage.mission.categoryId-1], ':y' : $scope.$storage.child.badges },
-		// });
+		var index = $scope.$storage.mission.categoryId-1;
+		$points[index] = $points[index] + compMission.value;
+		b = $scope.$storage.categories[index].levels;		
+		$badges = $scope.$storage.child.badges[index];
 		
+		for(var i=$badges;i<b.length;i++) {
+			if($points[$scope.$storage.mission.categoryId-1]>=b[i]) {
+				$scope.$storage.child.badges[index] = $scope.$storage.child.badges[index]+1;
+			}
+		}
+		$scope.getBadges();
+		DBClientFactory.updateItem({	
+			TableName: 'child',
+			Key: { 'childId': $scope.$storage.child.childId },
+				UpdateExpression: 'set #a = :x',
+				ExpressionAttributeNames: {'#a': 'points',},
+				ExpressionAttributeValues: { ':x' : $scope.$storage.child.points,},
+		});	
+		
+		DBClientFactory.updateItem({	
+			TableName: 'child',
+			Key: { 'childId': $scope.$storage.child.childId },
+				UpdateExpression: 'set #b = :y',
+				ExpressionAttributeNames: {'#b': 'badges',},
+				ExpressionAttributeValues: {':y' : $scope.$storage.child.badges },
+		});
 	}
 	
-	// $scope.getBadges = function(){
-			
-		// for(var i=0;i<$scope.$storage.child.badges.length;i++) {
+	$scope.getBadges = function(){	
+		console.log($scope.$storage);
+		$points = $scope.$storage.child.points;	
+		$badges = $scope.$storage.child.badges;
+		for(var i=0;i<$badges.length;i++) {
+			console.log('Childs Points: ' + $points[i]);
+			console.log($badges[i]);
+		}
 			// var results = [];
 			// for(var i=0;i<$scope.$storage.categories;i++){
 				// for(var j=0;j<$scope.$storage.catLevels[i];j++) {
@@ -446,7 +448,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 			// console.log($scope.$storage.child.badges[i])
 			
 		// }
-	// }
+	}
 	
 	$scope.cancelMission = function() {
 		chal = $scope.$storage.currentChallenges;
@@ -484,8 +486,6 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 }])
 
 .controller('profileCtrl', ['$scope','$state', '$stateParams', 'awsCognitoIdentityFactory','StorageService',
-// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $state, $stateParams, awsCognitoIdentityFactory, StorageService) {
 	$scope.$storage = StorageService.getAll();
@@ -504,24 +504,14 @@ function ($scope, $state, $stateParams, awsCognitoIdentityFactory, StorageServic
 
 }])
    
-.controller('badgesCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
+.controller('badgesCtrl', ['$scope', '$stateParams', 
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams) {
 
 
 }])
       
-.controller('welcomeCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams) {
-    
-
-}])
-
-.controller('challenge_SubmittedCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
+.controller('challenge_SubmittedCtrl', ['$scope', '$stateParams',
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams) {
 
