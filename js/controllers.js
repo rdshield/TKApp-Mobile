@@ -222,15 +222,15 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	
 	$scope.setupLogin = function() {
 		getUserFromLocalStorage();
+		console.log($scope.$storage);
 		if($scope.$storage.child == {}) { 
 			$state.go('select_Child') 			
 		}
-		else {
-			$scope.getChallenges();
-		}
+		else {	$scope.getChallenges();	}
 	}
 	
 	$scope.getChallenges = function() {
+		
 		DBClientFactory.readItems('challengeCategory').then( function(result) {
 			function compare(a,b){
 				comparison = 0;
@@ -243,6 +243,26 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 			};
 			var a = result.Items.sort(compare);
 			$scope.add('categories', a);
+			if($scope.$storage.child.points.length < $scope.$storage.categories.length) {
+				for(var i=$scope.$storage.child.points.length;i<$scope.$storage.categories.length;i++) {
+					$scope.$storage.child.badges.push(0);
+					$scope.$storage.child.points.push(0);
+				}
+				DBClientFactory.updateItem({	
+					TableName: 'child',
+					Key: { 'childId': $scope.$storage.child.childId },
+					UpdateExpression: 'set #a = :x',
+					ExpressionAttributeNames: {'#a': 'points'},
+					ExpressionAttributeValues: { ':x' : $scope.$storage.child.points,},
+				});	
+				DBClientFactory.updateItem({	
+					TableName: 'child',
+					Key: { 'childId': $scope.$storage.child.childId },
+					UpdateExpression: 'set #a = :x',
+					ExpressionAttributeNames: {'#a': 'badges'},
+					ExpressionAttributeValues: { ':x' : $scope.$storage.child.badges,},
+				});	
+			}
 		});
 		
 		DBClientFactory.readItems('missionBadges').then( function(result) {
@@ -257,51 +277,48 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 			};
 			var a = result.Items.sort(compare);
 			$scope.add('possibleBadges', a);
-		});
-		
+		});		
 		
 		DBClientFactory.readItems('challenges').then( function(result) {
-			var $redo= (($scope.$storage.currentChallenges.length==0)&&($scope.$storage.completedChallenges.length==0))
-			if($redo) {
-				$scope.add('challenges',result.Items); 
-				$scope.add('currentChallenges', ($scope.$storage.child.currChallenges) );
-				$scope.add('completedChallenges', ($scope.$storage.child.complChallenges) );
-				
-				var currChallenges = [];
-				currLength = $scope.$storage.currentChallenges.length;
-				for(var i=0; i<currLength; i++) {
-					var result = $scope.$storage.challenges.filter(function( obj ) { return obj.challengeId == $scope.$storage.currentChallenges[i] });
-					if(result.length != 0) {
-						currChallenges.push(result[0]);
-					}
+			$scope.add('challenges',result.Items); 
+			$scope.add('currentChallenges', ($scope.$storage.child.currChallenges) );
+			$scope.add('completedChallenges', ($scope.$storage.child.complChallenges) );
+			
+			var currChallenges = [];
+			currLength = $scope.$storage.currentChallenges.length;
+			for(var i=0; i<currLength; i++) {
+				var result = $scope.$storage.challenges.filter(function( obj ) { return obj.challengeId == $scope.$storage.currentChallenges[i] });
+				if(result.length != 0) {
+					currChallenges.push(result[0]);
 				}
-				
-				var complChallenges = [];
-				compLength = $scope.$storage.completedChallenges.length;
-				for(var i=0; i<compLength; i++) {
-					var result = $scope.$storage.challenges.filter(function( obj ) { return obj.challengeId == $scope.$storage.completedChallenges[i] });
-					if(result.length != 0) {
-						var today = new Date();
-						var d= today.getDate();
-						var m= today.getMonth()+1;
-						var y= today.getFullYear();
-						if(d<10) { d= '0' + d};
-						if(m<10) { m= '0' + m};
-						today = m + '/' + d + '/' + y;
-						result[0].completeDate = today;
-						complChallenges.push(result[0]);
-					}
-				}
-				$scope.add("currentChallenges",currChallenges);
-				$scope.add("completedChallenges",complChallenges);
-				$state.go('tabsController.missions',{},{reload:true});
 			}
-			$scope.getBadges();
+			
+			var complChallenges = [];
+			compLength = $scope.$storage.completedChallenges.length;
+			for(var i=0; i<compLength; i++) {
+				var result = $scope.$storage.challenges.filter(function( obj ) { return obj.challengeId == $scope.$storage.completedChallenges[i] });
+				if(result.length != 0) {
+					var today = new Date();
+					var d= today.getDate();
+					var m= today.getMonth()+1;
+					var y= today.getFullYear();
+					if(d<10) { d= '0' + d};
+					if(m<10) { m= '0' + m};
+					today = m + '/' + d + '/' + y;
+					result[0].completeDate = today;
+					complChallenges.push(result[0]);
+				}
+			}
+			$scope.add("currentChallenges",currChallenges);
+			$scope.add("completedChallenges",complChallenges);
+			$scope.$storage.timesRun++;
+			if($scope.$storage.timesRun==1) { $state.go('tabsController.missions',{},{reload:true}); }
+			$scope.getBadges(); 
 		});
-		
 	}
 	
 	$scope.getBadges = function(){	
+		console.
 		$points = $scope.$storage.child.points;	
 		$badgeCount = $scope.$storage.child.badges;
 		$categories = $scope.$storage.categories;
@@ -425,6 +442,8 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 		if($scope.$storage.completedChallenges.length > 5) {
 			$scope.$storage.completedChallenges.pop();
 		}
+		console.log(temp)
+		console.log($scope.$storage);
 		DBClientFactory.updateItem({	
 			TableName: 'child',
 			Key: { 'childId': $scope.$storage.child.childId },
@@ -433,13 +452,13 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 				ExpressionAttributeValues: { ':x' : temp,},
 		});
 		var $points = $scope.$storage.child.points;
-		var index = $scope.$storage.mission.categoryId-1;
+		var index = $scope.$storage.mission.categoryId;
 		$points[index] = $points[index] + compMission.value;
 		b = $scope.$storage.categories[index].levels;		
 		$badges = $scope.$storage.child.badges[index];
 		
 		for(var i=$badges;i<b.length;i++) {
-			if($points[$scope.$storage.mission.categoryId-1]>=b[i]) {
+			if($points[$scope.$storage.mission.categoryId]>=b[i]) {
 				$scope.$storage.child.badges[index] = $scope.$storage.child.badges[index]+1;
 			}
 		}
@@ -490,13 +509,13 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 		$scope.add('currentChallenges',curr);
 		$scope.$storage.child.currChallenges = temp;
 		$scope.$storage.availableChallenges.push($scope.$storage.mission);
-		// DBClientFactory.updateItem({	
-			// TableName: 'child',
-			// Key: { 'childId': $scope.$storage.child.childId },
-				// UpdateExpression: 'set #a = :x',
-				// ExpressionAttributeNames: {'#a': 'currChallenges'},
-				// ExpressionAttributeValues: { ':x' : temp,},
-		// });	
+		DBClientFactory.updateItem({	
+			TableName: 'child',
+			Key: { 'childId': $scope.$storage.child.childId },
+				UpdateExpression: 'set #a = :x',
+				ExpressionAttributeNames: {'#a': 'currChallenges'},
+				ExpressionAttributeValues: { ':x' : temp,},
+		});	
 		$state.go('tabsController.missions',{}, {reload: true});
 
 	}

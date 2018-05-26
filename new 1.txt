@@ -7,41 +7,6 @@ Need to finish:
 <Mobile App>
 
 - Transitions (Make it Flashy)
-- Badges
-- New Child Account (Verify all variables are created)
-- New Category (make sure if a cat is added, child is able to earn points for that one)
 
 Optional:
 - Show if badge will be earned on Mission Briefing
-
-
-{
-  "badges": [
-    0,
-    0,
-    0,
-    0,
-    0
-  ],
-  "childGender": "Male",
-  "childGrade": 12,
-  "childId": "7c89833a-abcf-4701-908b-cdab00c6a023:37",
-  "childName": "Glen",
-  "complChallenges": [
-    1,
-    3,
-    3,
-    1,
-    3
-  ],
-  "currChallenges": [],
-  "Id": 37,
-  "parentId": "7c89833a-abcf-4701-908b-cdab00c6a023",
-  "points": [
-    0,
-    60,
-    1000,
-    100,
-    10
-  ]
-}
