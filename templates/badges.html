@@ -1,7 +1,7 @@
 <ion-view title="Badges" id="page4">
   <ion-content padding="true" class="has-header">
-    <ion-item ng-repeat="badge in $storage.possibleBadges">
-		{{mission.badgeId}} - {{mission.address}}
+    <ion-item ng-repeat="badge in $storage.possibleBadges" ng-if="$storage.badges.indexOf(badge.badgeId)!=-1">
+		{{badge.badgeId}} - {{badge.address}}
 	</ion-item> 
   </ion-content>
 </ion-view>

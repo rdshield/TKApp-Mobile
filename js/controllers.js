@@ -534,6 +534,7 @@ function ($scope, $state, $stateParams, awsCognitoIdentityFactory, StorageServic
 .controller('badgesCtrl', ['$scope', '$stateParams', 'StorageService',
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, StorageService) {
+	$scope.$storage = StorageService.getAll();
 	console.log($scope.$storage)
 
 
