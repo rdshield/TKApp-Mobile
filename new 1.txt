@@ -1,12 +1,7 @@
 Need to finish:
 <Web App>
-- Pictures for Mission
-- Loading Badges on Categories
-- Point Values
+- Verify Password Reset is working (Popup requesting re-login)
 
 <Mobile App>
 
 - Transitions (Make it Flashy)
-
-Optional:
-- Show if badge will be earned on Mission Briefing

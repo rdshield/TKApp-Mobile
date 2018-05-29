@@ -7,12 +7,12 @@ angular.module('aws.cognito.identity', [])
   var cognitoEndpoint = 'cognito-idp.us-west-2.amazonaws.com';
   var region = 'us-west-2';
   // how to get userPoolId, go to AWS Console -> Cognito -> User pools -> <select_user_pool> -> Pool details -> Pool Id
-  var userPoolId = 'us-west-2_3isz7XCIF';
+  var userPoolId = 'us-west-2_7Qa6mard7';
   // how to get clientId, go to AWS Console -> Cognito -> User pools -> <select_user_pool> -> Apps -> App client id
-  var clientId = '5o9klqg9orcnjjpi7md0lh5qd2';
+  var clientId = '7rnqr5p0krrgjalf4igaarjjh0';
   // how to get identityPoolId, go to AWS Console -> Cognito -> Federate Identities > <select_federate_identity> -> Edit -> Identity pool ID
-  var identityPoolId = 'us-west-2:1a49aa9f-09bc-4052-9e22-7c3cf3d78fe5';
-  /* *********************************** */
+  var identityPoolId = 'us-west-2:cd6145a2-2e7d-4f1b-aa51-f53e77605ce8';
+ 
 
   AWS.config.region = region;
   AWS.config.credentials = new AWS.CognitoIdentityCredentials({ IdentityPoolId: identityPoolId });
@@ -27,16 +27,20 @@ angular.module('aws.cognito.identity', [])
   /* Public methods */
 
   // Register a new user in Aws Cognito User pool
-  aws.signUp = function(username, email, password, callback) {
-    setupUser(username)
+  aws.signUp = function(user, params, callback) {
+    setupUser(user);
 
-    var attributeList = [];
-    var dataEmail = { Name: 'email', Value: email }
-    var attributeEmail =
-      new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute(dataEmail);
-
-    attributeList.push(attributeEmail);
-    return userPool.signUp(username, password, attributeList, null, callback);
+    var attributeList = [
+			new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute({ Name: 'email', Value: user }),
+			new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute({ Name: 'name', Value: params.name }),
+			new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute({ Name: 'family_name', Value: params.family_name }),
+			new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute({ Name: 'custom:address', Value: params.address }),
+			new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute({ Name: 'custom:city', Value: params.city }),
+			new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute({ Name: 'custom:state', Value: params.state }),
+			new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute({ Name: 'custom:zipCode', Value: params.zipCode }),
+			new AWSCognito.CognitoIdentityServiceProvider.CognitoUserAttribute({ Name: 'custom:phone_number', Value: params.phoneNum}),
+	] 
+    return userPool.signUp(user, params.pass1, attributeList, null, callback);
   }
 
   // Login user and setup a credential object

@@ -69,20 +69,27 @@ function ($scope, $state, $stateParams, awsCognitoIdentityFactory,StorageService
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
 	$scope.user = {};
-
+	$scope.states = ['AK','AL','AR','AZ','CA','CO','CT','DE','FL','GA','HI','IA','ID','IL','IN','KS','KY','LA','MA','MD','ME','MI','MN','MO','MS','MT','NC','ND','NE','NH','NJ','NM','NV','NY','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VA','VT','WA','WI','WV','WY']
     $scope.error = {
 		message: null
     };
+	
+	$temp = document.getElementById('stateSelect');
+	for(var i=0;i<$scope.states.length;i++) {
+		$temp.insertAdjacentHTML('beforeend',("<option value="+$scope.states[i]+ ">" +$scope.states[i]+" </option>"))
+	}
+	
 
 	$scope.register = function() {
-	  if ($scope.user.pass1 !== $scope.user.pass2) {
+	console.log($scope);
+	if ($scope.user.pass1 !== $scope.user.pass2) {
 			//errorHandler('The passwords entered do not match');
 			$scope.error.message = 'The passwords entered do not match';
 			$scope.$apply();
 			return false;
 	  }		
 	  $scope.user.email = $scope.user.email.toLowerCase();	  
-      awsCognitoIdentityFactory.signUp($scope.user.email, $scope.user.email, $scope.user.pass1,
+      awsCognitoIdentityFactory.signUp($scope.user.email, $scope.user,
         function(err, result) {
           if(err) {
             errorHandler(err);
@@ -222,7 +229,6 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	
 	$scope.setupLogin = function() {
 		getUserFromLocalStorage();
-		console.log($scope.$storage);
 		if($scope.$storage.child == {}) { 
 			$state.go('select_Child') 			
 		}
@@ -231,7 +237,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	
 	$scope.getChallenges = function() {
 		
-		DBClientFactory.readItems('challengeCategory').then( function(result) {
+		DBClientFactory.readItems('categories').then( function(result) {
 			function compare(a,b){
 				comparison = 0;
 				if (a.categoryId > b.categoryId) {
@@ -265,7 +271,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 			}
 		});
 		
-		DBClientFactory.readItems('missionBadges').then( function(result) {
+		DBClientFactory.readItems('badges').then( function(result) {
 			function compare(a,b){
 				comparison = 0;
 				if (a.badgeId > b.badgeId) {
@@ -279,7 +285,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 			$scope.add('possibleBadges', a);
 		});		
 		
-		DBClientFactory.readItems('challenges').then( function(result) {
+		DBClientFactory.readItems('missions').then( function(result) {
 			$scope.add('challenges',result.Items); 
 			$scope.add('currentChallenges', ($scope.$storage.child.currChallenges) );
 			$scope.add('completedChallenges', ($scope.$storage.child.complChallenges) );
@@ -318,7 +324,6 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	}
 	
 	$scope.getBadges = function(){	
-		console.
 		$points = $scope.$storage.child.points;	
 		$badgeCount = $scope.$storage.child.badges;
 		$categories = $scope.$storage.categories;
@@ -335,6 +340,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	}
 	
 	$scope.selectMission = function(mission,type) {
+		console.log($scope.$storage);
 		$scope.add('mission',mission);
 		$scope.add('missionType',type);
 		$state.go('missionBriefing',{}, {});
@@ -411,7 +417,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	}
 
 	$scope.acceptMission = function() {
-		$scope.$storage.child.currChallenges.push($scope.$storage.mission.challengeId);
+		$scope.$storage.child.currChallenges.push($scope.$storage.mission.missionId);
 		$scope.$storage.currentChallenges.push($scope.$storage.mission);
 		$scope.$storage.availableChallenges.splice($scope.$storage.availableChallenges.indexOf($scope.$storage.mission),1)
 		DBClientFactory.updateItem({	
@@ -425,7 +431,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	}
 	
 	$scope.submitMission = function() {
-		var temp = $scope.$storage.child.complChallenges;
+		var temp = $scope.$storage.child.completedChallenges;
 		temp.unshift($scope.$storage.mission.challengeId);
 		if(temp.length > 5) { temp.pop(); }
 		var today = new Date();
@@ -442,8 +448,6 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 		if($scope.$storage.completedChallenges.length > 5) {
 			$scope.$storage.completedChallenges.pop();
 		}
-		console.log(temp)
-		console.log($scope.$storage);
 		DBClientFactory.updateItem({	
 			TableName: 'child',
 			Key: { 'childId': $scope.$storage.child.childId },
@@ -554,9 +558,6 @@ function ($scope, $state, $stateParams, awsCognitoIdentityFactory, StorageServic
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, StorageService) {
 	$scope.$storage = StorageService.getAll();
-	console.log($scope.$storage)
-
-
 }])
       
 .controller('challenge_SubmittedCtrl', ['$scope', '$stateParams',

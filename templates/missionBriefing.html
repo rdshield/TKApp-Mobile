@@ -5,7 +5,7 @@
 	</button>
   </ion-nav-buttons>
   <ion-content padding="true" class="has-header">
-	<h4 id="missionBriefing-heading2" ng-if="$storage.mission.challengeName" " style="color:#000000;" ng-model="mission.Name"> {{$storage.mission.challengeName}} </h4>
+	<h4 id="missionBriefing-heading2" ng-if="$storage.mission.missionName" " style="color:#000000;" ng-model="mission.Name"> {{$storage.mission.missionName}} </h4>
     <div style="margin: 0px; line-height: 250px; background-color: rgb(232, 235, 239); text-align: center;">
       <i class="icon ion-image" style="font-size: 64px; color: rgb(136, 136, 136); vertical-align: middle;" ng-model="mission.pic"></i>
     </div>
@@ -14,7 +14,7 @@
 	  <b><i> Mission Type: {{$storage.mission.category}} </i></b>
       <br>
 	  <br>
-	  <p style="color:#000000;" ng-model="mission.Desc">{{$storage.mission.challengeDesc}}</p>
+	  <p style="color:#000000;" ng-model="mission.Desc">{{$storage.categories[$storage.mission.categoryId].categoryName}}</p>
 	  <br>
 	  <p style="color:red;"><b> Reward: {{$storage.mission.value}} points 
 	  

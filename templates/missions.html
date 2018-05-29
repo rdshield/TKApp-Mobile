@@ -3,11 +3,11 @@
     <ion-list id="missions-list3">
       <ion-item class="item-divider" id="missions-list-item-divider4"> Missions I've Accepted</ion-item>
 	  <ion-item ng-repeat="mission in $storage.currentChallenges|orderBy: 'challengeId'" ng-click="selectMission(mission,1)">
-		{{mission.challengeName}}
+		{{mission.missionName}}
 		</ion-item>
       <ion-item class="item-divider" id="missions-list-item-divider6"> Missions I've Completed Recently</ion-item>
       <ion-item ng-repeat="mission in $storage.completedChallenges track by $index" ng-click="selectMission(mission,2)">
-		{{mission.challengeName}} - <i>Completed: <b>{{mission.completeDate}}</b></i>
+		{{mission.missionName}} - <i>Completed: <b>{{mission.completeDate}}</b></i>
 	  </ion-item> 
 
     </ion-list>
