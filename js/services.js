@@ -8,12 +8,11 @@ $localStorage = $localStorage.$default({
 	mission: {},
 	missionType: {},
 	categories: [],
-	challenges: [],
-	availableChallenges: [],
-	currentChallenges: 	 [],
-	completedChallenges: [],
-	possibleBadges: 	 [],
-	badges: [],
+	missions: [],
+	availableMissions: [],
+	currentMissions:   [],
+	completedMissions: [],
+	//badges: [],
 	timesRun: 0,
 });
 	
@@ -23,13 +22,12 @@ var _remove = function (thing) { $localStorage.things.splice($localStorage.thing
 var _reset = function () {
 	$localStorage.mission=				{},
 	$localStorage.missionType=			{},
-	$localStorage.challenges= 			[],
-	$localStorage.availableChallenges=	[],
-	$localStorage.currentChallenges= 	[],
-	$localStorage.completedChallenges= 	[],
+	$localStorage.missions= 			[],
+	$localStorage.availableMissions=	[],
+	$localStorage.currentMissions= 		[],
+	$localStorage.completedMissions= 	[],
 	$localStorage.categories= 			[],
-	$localStorage.possibleBadges= 		[],
-	$localStorage.badges=				[],
+	//$localStorage.badges=				[],
 	$localStorage.timesRun=				0;
 }
 
