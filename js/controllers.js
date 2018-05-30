@@ -1,16 +1,15 @@
-angular.module('app.controllers', ['aws.cognito.identity', 'DBClient', 'ngMessages', 'ionic' ])
+//Serves as the primary logic for the app. Each Controller connects to the template, as noted in the "routes.js"
+
+angular.module('app.controllers', ['aws.cognito.identity', 'DBClient', 'ngMessages'])
 
 .controller('loginCtrl', ['$scope','$state', '$stateParams', 'awsCognitoIdentityFactory','StorageService',
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
+
 function ($scope, $state, $stateParams, awsCognitoIdentityFactory,StorageService) {
 	$scope.$storage = StorageService.getAll();
-    $scope.user = { email: "", password: "" };
     $scope.error = { message: null };
+	$scope.user = { email: "", password: "");
 	
-	$scope.setupPage = function() {
-		//StorageService.add('things',['alpha']);
-		$scope.getUserFromLocalStorage();	
-	}
+	$scope.setupPage = function() {	$scope.getUserFromLocalStorage(); }
 
 	$scope.getUserFromLocalStorage = function() {
       awsCognitoIdentityFactory.getUserFromLocalStorage(function(err, isValid) {
@@ -19,21 +18,25 @@ function ($scope, $state, $stateParams, awsCognitoIdentityFactory,StorageService
 			return false;
         } else {
 			if(isValid) { $state.go('select_Child', {}, {reload: true}) }
-			else {	StorageService.resetToDefault(); 
-			}
+			else {	StorageService.resetToDefault(); }
 		}
       });
     }
 	
 	$scope.signIn = function(login) {
 		$scope.user.email = $scope.user.email.toLowerCase();
-		if($scope.user.email == "" || $scope.user.password == "")
+		if($scope.user.email == "")
 		{
-			$scope.error.message = "Both Username and Password are required."
+			$scope.error.message = "Please provide a valid email account to sign in."
+			$scope.$apply();
+			return false;
+		} else if($scope.user.password == "" ){
+			$scope.error.message = "A password is required for proper login."
 			$scope.$apply();
 			return false;
 		} else {
 			awsCognitoIdentityFactory.signIn($scope.user.email, $scope.user.password, function(err) {
+			$scope.user.password = "";
 			if(err) {
 			  console.log(err);
 			  if (err.message === 'Incorrect username or password.') {
@@ -66,42 +69,33 @@ function ($scope, $state, $stateParams, awsCognitoIdentityFactory,StorageService
 }])
  
 .controller('createANewAccountCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams',
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
+
 function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
 	$scope.user = {};
 	$scope.states = ['AK','AL','AR','AZ','CA','CO','CT','DE','FL','GA','HI','IA','ID','IL','IN','KS','KY','LA','MA','MD','ME','MI','MN','MO','MS','MT','NC','ND','NE','NH','NJ','NM','NV','NY','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VA','VT','WA','WI','WV','WY']
-    $scope.error = {
-		message: null
-    };
+    $scope.error = { message: null };
 	
 	$temp = document.getElementById('stateSelect');
 	for(var i=0;i<$scope.states.length;i++) {
 		$temp.insertAdjacentHTML('beforeend',("<option value="+$scope.states[i]+ ">" +$scope.states[i]+" </option>"))
 	}
 	
-
 	$scope.register = function() {
-	console.log($scope);
-	if ($scope.user.pass1 !== $scope.user.pass2) {
-			//errorHandler('The passwords entered do not match');
-			$scope.error.message = 'The passwords entered do not match';
+		if ($scope.user.pass1 !== $scope.user.pass2) {
+			$scope.error.message = 'The passwords provided  do not match';
 			$scope.$apply();
 			return false;
-	  }		
-	  $scope.user.email = $scope.user.email.toLowerCase();	  
-      awsCognitoIdentityFactory.signUp($scope.user.email, $scope.user,
-        function(err, result) {
-          if(err) {
-            errorHandler(err);
-            return false;
-          }
-			
-		  info = { 'email': $scope.user.email };
-          //$scope.$apply();
-		  $scope.user = {}; //clear register form
-          $state.go('accountConfirmation', info);
-        });
-      return true;
+		}
+		$scope.user.email = $scope.user.email.toLowerCase();	  
+		awsCognitoIdentityFactory.signUp($scope.user.email, $scope.user, function(err, result) {
+			if(err) {
+				errorHandler(err);
+				return false;
+			}
+			$scope.user = {}; //clear register form
+			$state.go('accountConfirmation', info);
+		});
+		return true;
     }
 
     errorHandler = function(err) {
@@ -112,7 +106,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
 }])
 
 .controller('accountConfirmationCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams',
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
+
 function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
 	$scope.error = { message: null };
 	$scope.user = {};
@@ -122,9 +116,8 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
 		awsCognitoIdentityFactory.confirmAccount($scope.user.email, $scope.user.confirmCode, function(err) {
 			if(!err) {
 				$scope.error.message = "Your account has been successfully validated. Please login to complete setup.";
-				setTimeout(function(){ $state.go('login',{}, {reload:true}); },3000);
-			}
-			else {
+				setTimeout(function(){ $state.go('login',{}, {reload:true}); },5000);
+			} else {
 				console.log(err);
 				$scope.error.message = err.message + ". Please try again.";
 			}
@@ -133,7 +126,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams) {
 }])
 
 .controller('select_ChildCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', 'DBClientFactory', 'StorageService',  
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
+
 function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory, StorageService) {
 	$scope.$storage = StorageService.getAll();
 	$scope.add = function (key, thing) { StorageService.add(key, thing); };
@@ -158,27 +151,23 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	}
 
 	function getUserFromLocalStorage(){
-      awsCognitoIdentityFactory.getUserFromLocalStorage(function(err, isValid) {
-        if(err) {
-          $scope.error.message = err.message;
-          return false;
-        }
-		$scope.AWS = AWS.config;
-      });
+		awsCognitoIdentityFactory.getUserFromLocalStorage(function(err, isValid) {
+			if(err) {
+				$scope.error.message = err.message;
+				return false;
+			}
+			$scope.AWS = AWS.config;
+		});
     }	
 }])
  
 .controller('addAChildCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', 'DBClientFactory', 'StorageService',
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
+
 function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory, StorageService) {
 	$scope.$storage = StorageService.getAll();
 	$scope.add = function (key, thing) { StorageService.add(key, thing); };	
 	$scope.user = {};
-	
-	$scope.setupPage = function() {
-		$scope.getUserFromLocalStorage();	
-	}
-	
+	$scope.setupPage = function() { $scope.getUserFromLocalStorage();	}
 	$scope.getUserFromLocalStorage = function() {
 		awsCognitoIdentityFactory.getUserFromLocalStorage(function(err, isValid) {
 			if(err) {
@@ -195,18 +184,17 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 			temp = $scope.user.childName;
 			$scope.user.childName = (temp.substring(0,1).toUpperCase() + temp.substring(1,temp.length).toLowerCase()); 
 			var params = {
-				childId:		(sub +":"+ childCount),
-				Id:				childCount,
-				childName:		$scope.user.childName,
-				childGrade: 	$scope.user.childGrade,
-				childGender:    $scope.user.childGender,
-				complChallenges:[],
-				currChallenges: [],
-				points:			[],
-				badges:			[],
-				parentId:		sub,
+				childId:			(sub +":"+ childCount),
+				Id:					childCount,
+				childName:			$scope.user.childName,
+				childGrade: 		$scope.user.childGrade,
+				childGender:    	$scope.user.childGender,
+				completedChallenges:[],
+				currentChallenges: 	[],
+				points:				[],
+				badges:				[],
+				parentId:			sub,
 			}
-			
 			var param = DBClientFactory.getParameters('child',params);
 			DBClientFactory.writeItem(param);
 			DBClientFactory.updateItem({	
@@ -222,21 +210,18 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 }])
  
 .controller('missionsCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', 'DBClientFactory', 'StorageService',
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
+
 function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory, StorageService) {
 	$scope.$storage = StorageService.getAll();
 	$scope.add = function (key, thing) { StorageService.add(key, thing); };
-	
 	$scope.setupLogin = function() {
 		getUserFromLocalStorage();
-		if($scope.$storage.child == {}) { 
-			$state.go('select_Child') 			
-		}
+		if($scope.$storage.child == {}) { $state.go('select_Child') }
 		else {	$scope.getChallenges();	}
 	}
 	
 	$scope.getChallenges = function() {
-		
+		console.log($scope.$storage)
 		DBClientFactory.readItems('categories').then( function(result) {
 			function compare(a,b){
 				comparison = 0;
@@ -247,8 +232,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 				}
 				return comparison;
 			};
-			var a = result.Items.sort(compare);
-			$scope.add('categories', a);
+			$scope.add('categories', result.Items.sort(compare));
 			if($scope.$storage.child.points.length < $scope.$storage.categories.length) {
 				for(var i=$scope.$storage.child.points.length;i<$scope.$storage.categories.length;i++) {
 					$scope.$storage.child.badges.push(0);
@@ -403,7 +387,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 
 .controller('missionBriefingCtrl', ['$scope','$state','awsCognitoIdentityFactory', '$stateParams', 'DBClientFactory','StorageService', 
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory, StorageService, $ionicHistory) {
+function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory, StorageService) {
 	$scope.$storage = StorageService.getAll();
 	$scope.add = function (key, thing) { StorageService.add(key, thing); };
 	$scope.goBack = function(){
