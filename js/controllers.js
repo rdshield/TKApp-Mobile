@@ -191,6 +191,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 				childGender:    	$scope.user.childGender,
 				completedMissions:  [],
 				currentMissions: 	[],
+				badges: 			[],
 				points:				[],
 				parentId:			sub,
 			}
@@ -220,7 +221,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	}
 	
 	$scope.getMissions = function() {
-		console.log($scope.$storage)
+		//console.log($scope.$storage)
 		DBClientFactory.readItems('categories').then( function(result) {
 			function compare(a,b){
 				comparison = 0;
@@ -257,11 +258,11 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 			for(var i=0; i<currLength; i++) {
 				var result = $scope.$storage.missions.filter( function( obj ) { return obj.missionId == $scope.$storage.currentMissions[i] });
 				if(result.length != 0) {
-					currChallenges.push(result[0]);
+					currMissions.push(result[0]);
 				}
 			}
 			
-			var complMissions = [];
+/* 			var complMissions = [];
 			compLength = $scope.$storage.completedMissions.length;
 			for(var i=0; i<compLength; i++) {
 				var result = $scope.$storage.challenges.filter(function( obj ) { return obj.challengeId == $scope.$storage.completedChallenges[i] });
@@ -276,33 +277,23 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 					result[0].completeDate = today;
 					complChallenges.push(result[0]);
 				}
-			}
+			} */
 			
-			$scope.add("currentChallenges",currMissions);
-			$scope.add("completedChallenges",complMissions);
+			$scope.add("currentMissions",currMissions);
+			//$scope.add("completedChallenges",complMissions);
 			$scope.$storage.timesRun++;
 			if($scope.$storage.timesRun==1) { $state.go('tabsController.missions',{},{reload:true}); }
 			$scope.getBadges(); 
 		});
 	}
 	
-	$scope.getBadges = function(){	
-		$points = $scope.$storage.child.points;	
-		$badgeCount = $scope.$storage.child.badges;
+	$scope.getBadges = function(){
+		console.log($scope.$storage);
 		$categories = $scope.$storage.categories;
 		
-		result = [];
-		for(var i=0;i<$points.length;i++) {
-			if($points[i] > 0) {
-				
-			}
-			if($badgeCount[i] > 0) {
-				for(var j=0;j<$badgeCount[i];j++) {
-					result.push(badgeIds = $categories[i].badges[j]);
-				}
-			}
+		if($scope.$storage.badges.length() < $scope.$storage.child.badges.length()) {
+			$scope.add('badges', $scope.$storage.child.badges);
 		}
-		$scope.add('badges',result);
 	}
 	
 	$scope.selectMission = function(mission,type) {
