@@ -218,6 +218,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 		getUserFromLocalStorage();
 		if($scope.$storage.child == {}) { $state.go('select_Child') }
 		else {	$scope.getMissions();	}
+		
 	}
 	
 	$scope.getMissions = function() {
@@ -249,38 +250,29 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 		});
 		
 		DBClientFactory.readItems('missions').then( function(result) {
-			$scope.add('missions',result.Items); 
+			console.log($scope.$storage);
+			function compare(a,b){
+				comparison = 0;
+				if (a.missionId > b.missionId) {
+					comparison = 1;
+				} else if (b.missionId > a.missionId) {
+					comparison = -1;
+				}
+				return comparison;
+			};
+			$scope.add('missions', result.Items.sort(compare));
 			$scope.add('currentMissions', ($scope.$storage.child.currentMissions) );
 			$scope.add('completedMissions', ($scope.$storage.child.completedMissions) );
-			
 			var currMissions = [];
-			currLength = $scope.$storage.currentMissions.length;
-			for(var i=0; i<currLength; i++) {
+			for(var i=0; i<$scope.$storage.missions.length; i++) {
 				var result = $scope.$storage.missions.filter( function( obj ) { return obj.missionId == $scope.$storage.currentMissions[i] });
 				if(result.length != 0) {
 					currMissions.push(result[0]);
+					console.log($scope.$storage.missions[i]);			
 				}
 			}
-			
-/* 			var complMissions = [];
-			compLength = $scope.$storage.completedMissions.length;
-			for(var i=0; i<compLength; i++) {
-				var result = $scope.$storage.challenges.filter(function( obj ) { return obj.challengeId == $scope.$storage.completedChallenges[i] });
-				if(result.length != 0) {
-					var today = new Date();
-					var d= today.getDate();
-					var m= today.getMonth()+1;
-					var y= today.getFullYear();
-					if(d<10) { d= '0' + d};
-					if(m<10) { m= '0' + m};
-					today = m + '/' + d + '/' + y;
-					result[0].completeDate = today;
-					complChallenges.push(result[0]);
-				}
-			} */
-			
-			$scope.add("currentMissions",currMissions);
-			//$scope.add("completedChallenges",complMissions);
+			$scope.add('currentMissions',currMissions);
+			$scope.add('completedMissions', $scope.$storage.child.completedMissions);
 			$scope.$storage.timesRun++;
 			if($scope.$storage.timesRun==1) { $state.go('tabsController.missions',{},{reload:true}); }
 			$scope.getBadges(); 
@@ -288,10 +280,7 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 	}
 	
 	$scope.getBadges = function(){
-		console.log($scope.$storage);
-		$categories = $scope.$storage.categories;
-		
-		if($scope.$storage.badges.length() < $scope.$storage.child.badges.length()) {
+		if($scope.$storage.badges.length < $scope.$storage.child.badges.length) {
 			$scope.add('badges', $scope.$storage.child.badges);
 		}
 	}
@@ -318,7 +307,6 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFactory, StorageService) {
 	$scope.$storage = StorageService.getAll();
 	$scope.add = function (key, thing) { StorageService.add(key, thing); };
-	$scope.challenges= [];
 
 	$scope.goBack = function(){
 		$state.go('tabsController.missions',{}, {reload:true});
@@ -328,16 +316,17 @@ function ($scope, $state, awsCognitoIdentityFactory, $stateParams, DBClientFacto
 		getUserFromLocalStorage();
 		$scope.child = AWS.config.child;
 		$scope.getChallenges();
-		console.log($scope.$storage);
 	}
 	
 	$scope.getChallenges = function() {
-		$scope.$storage.availableChallenges = [];
-		length = $scope.$storage.challenges.length;
-		var idArray = $scope.$storage.currentChallenges.map(function (el) { return el.challengeId; });
+		length = $scope.$storage.missions.length;
+		var idArray = $scope.$storage.currentMissions.map(function (el) { return el.missionId; });
+		var availableIdArray = $scope.$storage.availableMissions.map(function (el) { return el.missionId; });
 		for(var i=0;i<length;i++) {
-			if($scope.$storage.challenges[i].isActive && (idArray.indexOf($scope.$storage.challenges[i].challengeId) == -1)) {
-				$scope.$storage.availableChallenges.push($scope.$storage.challenges[i]);
+			if($scope.$storage.missions[i].isActive && 
+			  (idArray.indexOf($scope.$storage.missions[i].missionId) == -1) &&
+			  (availableIdArray.indexOf($scope.$storage.missions[i].missionId) == -1)) {
+				$scope.$storage.availableMissions.push($scope.$storage.missions[i]);
 			}
 		}
 	}

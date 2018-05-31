@@ -12,7 +12,7 @@ $localStorage = $localStorage.$default({
 	availableMissions: [],
 	currentMissions:   [],
 	completedMissions: [],
-	//badges: [],
+	badges: [],
 	timesRun: 0,
 });
 	
@@ -27,7 +27,7 @@ var _reset = function () {
 	$localStorage.currentMissions= 		[],
 	$localStorage.completedMissions= 	[],
 	$localStorage.categories= 			[],
-	//$localStorage.badges=				[],
+	$localStorage.badges=				[],
 	$localStorage.timesRun=				0;
 }
 

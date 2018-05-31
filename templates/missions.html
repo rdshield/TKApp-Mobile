@@ -2,7 +2,7 @@
   <ion-content padding="true" class="manual-ios-statusbar-padding">
     <ion-list id="missions-list3">
       <ion-item class="item-divider" id="missions-list-item-divider4"> Missions I've Accepted</ion-item>
-	  <ion-item ng-repeat="mission in $storage.currentChallenges|orderBy: 'challengeId'" ng-click="selectMission(mission,1)">
+	  <ion-item ng-repeat="mission in $storage.currentMissions|orderBy: 'missionId'" ng-click="selectMission(mission,1)">
 		{{mission.missionName}}
 		</ion-item>
       <ion-item class="item-divider" id="missions-list-item-divider6"> Missions I've Completed Recently</ion-item>
