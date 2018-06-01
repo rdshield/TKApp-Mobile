@@ -16,8 +16,8 @@ $localStorage = $localStorage.$default({
 	timesRun: 0,
 });
 	
-var	_getAll = function () 	   {  return $localStorage; }
-var _add 	= function (key,thing) { $localStorage[key] = thing }
+var	_getAll = function () 	   { return $localStorage; }
+var _add 	= function (key,thing) { $localStorage[key] = thing; console.log($localStorage) }
 var _remove = function (thing) { $localStorage.things.splice($localStorage.things.indexOf(thing), 1) }
 var _reset = function () {
 	$localStorage.mission=				{},

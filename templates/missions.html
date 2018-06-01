@@ -6,7 +6,7 @@
 		{{mission.missionName}}
 		</ion-item>
       <ion-item class="item-divider" id="missions-list-item-divider6"> Missions I've Completed Recently</ion-item>
-      <ion-item ng-repeat="mission in $storage.completedChallenges track by $index" ng-click="selectMission(mission,2)">
+      <ion-item ng-repeat="mission in $storage.completedMissions track by $index" ng-click="selectMission(mission,2)">
 		{{mission.missionName}} - <i>Completed: <b>{{mission.completeDate}}</b></i>
 	  </ion-item> 
 
