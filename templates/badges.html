@@ -1,9 +1,10 @@
 <ion-view title="Current Badges" id="page4">
   <ion-content padding="true" class="has-header">
 	<ion-item class="item-divider" id="missions-list-item-divider5" ng-repeat="badge in $storage.badges track by $index" ng-if="badge != null"> 
-		<h3>{{$storage.categories[$index].categoryName}}</h3> 
+		<h2>{{$storage.categories[$index].categoryName}}</h2>
+		<h3>Total Points: {{$storage.child.points[$index]}}</h3> 
 		<img ng-src="{{badge}}">
-		<h4> Current Level: {{$storage.child.badge[$index]}} - Total Points: {{$storage.child.points[$index]}} </h4>
+		<h2> Current Level: {{$storage.child.badge}} {{$index}}</h2>
 		
 		</ion-item> 
 	</ion-item> 

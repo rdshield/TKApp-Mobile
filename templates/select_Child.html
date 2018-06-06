@@ -1,14 +1,17 @@
-<ion-view title="Select Child" hide-nav-bar="true" id="page10" ng-init="setupLogin()">
+<ion-view title="Select Child" hide-back-button="true" id="page10" ng-init="setupLogin()">
+  <ion-nav-buttons side="right" class="has-header">
+    <button class="button button-icon icon ion-android-refresh" ng-click="getChildren()"></button>
+  </ion-nav-buttons>
   <ion-content padding="true" class="manual-ios-statusbar-padding">
 	<div class="error" ng-show="error.message" style="text-align:center;" class="show-list-numbers-and-dots">
 		<p style="color:#FF0000;">
 		<b>{{ error.message }}</b>
 	</div>
     <h3 id="select_Child-heading1" style="color:#000000;text-align:center;">Choose Your Hero!</h3>
-    <div class="spacer" style="width: 300px; height: 15%;"></div>
+    <div class="spacer" style="width: 300px; height: 10%;"></div>
     <ion-item ng-repeat="child in $storage.children" ng-click="selectChild(child)">
-		<img src="images\circle.png" alt="ChildPic" height="40" width="40"> {{child.childName}} - Grade Level: {{child.childGrade}}
+		<img src="images\circle.png" alt="ChildPic" height="40" width="40"> <h2> {{child.childName}} - Grade Level: {{child.childGrade}} </h3>
 	</ion-item> 
-    <button ui-sref="addAChild()" id="select_Child-button17" class="button button-balanced button-block icon ion-android-add"> Add a New Child</button>
+    <button ui-sref="addAChild()" id="select_Child-button17" class="button button-balanced button-block icon ion-android-add">Add a New Child</button>
   </ion-content>
 </ion-view>

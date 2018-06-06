@@ -1,15 +1,17 @@
-<ion-view title="Select a New Mission" hide-back-button="true" id="page17" ng-init="setupChallenges()">
+<ion-view title="" hide-back-button="true" id="page17" ng-init="setupChallenges()">
   <ion-nav-buttons side="left">
     <button class="button back-button buttons button-clear header-item" ng-click="goBack()">
-        <i class="icon ion-ios-arrow-back"> Mission Home</i> 
+        <i class="icon ion-ios-arrow-back"> My Missions</i> 
     </button>
   </ion-nav-buttons>
 
   <ion-content padding="true" class="manual-ios-statusbar-padding">
     <h3 id="acceptAMission-heading2" style="color:#000000;text-align:center;"></h3>
-	<ion-item ng-if="$storage.availableMissions.length <= 0" style="text-align:center;">No New Missions.. Complete your current missions to unlock more missions! </ion-item>
+	<ion-item ng-if="$storage.availableMissions.length <= 0" style="text-align:center;"><h2>No New Missions.. Complete your current missions to unlock more missions!</h3> </ion-item>
 		<ion-item ng-repeat="chal in $storage.availableMissions|orderBy: 'missionId'"  ng-click="selectMission(chal)">
-			{{$storage.categories[chal.categoryId].categoryName}} - {{chal.missionName}}
+			<h2>{{chal.missionName}}</h2>
+			<h3> {{$storage.categories[chal.categoryId].categoryName}} </h3>
+			
 		</ion-item>
   </ion-content>
 </ion-view>

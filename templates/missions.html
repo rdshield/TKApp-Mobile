@@ -1,13 +1,17 @@
 <ion-view title="Missions" id="page2" hide-back-button="true" style="background-color:#FAFAFA;" ng-init="setupLogin()">
   <ion-content padding="true" class="manual-ios-statusbar-padding">
     <ion-list id="missions-list3">
-      <ion-item class="item-divider" id="missions-list-item-divider4"> Missions I've Accepted</ion-item>
+      <ion-item class="item-divider" id="missions-list-item-divider4"><h2>Missions I've Accepted</h2></ion-item>
+	  
+      <ion-item ng-if="$storage.currentMissions.length <= 0" style="text-align:center;"> <h2>No missions in progress</h2> </ion-item>
 	  <ion-item ng-repeat="mission in $storage.currentMissions|orderBy: 'missionId'" ng-click="selectMission(mission,1)">
 		{{mission.missionName}}
 		</ion-item>
-      <ion-item class="item-divider" id="missions-list-item-divider6"> Missions I've Completed Recently</ion-item>
-      <ion-item ng-repeat="mission in $storage.completedMissions track by $index" ng-click="selectMission(mission,2)">
-		{{mission.missionName}} - <i>Completed: <b>{{mission.completeDate}}</b></i>
+      <ion-item class="item-divider" id="missions-list-item-divider6"><h2>Missions I've Completed Recently</h2></ion-item>
+      <ion-item ng-if="$storage.completedMissions.length <= 0" style="text-align:center;"><h3>You have not completed any missions</h3></ion-item>
+	
+	  <ion-item ng-repeat="mission in $storage.completedMissions track by $index" ng-click="selectMission(mission,2)">
+		{{mission.missionName}}<h3><i>Completed on: <b>{{mission.completeDate}}</b></i></h3>
 	  </ion-item> 
 
     </ion-list>

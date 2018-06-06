@@ -81,7 +81,6 @@ angular.module('aws.cognito.identity', [])
           callback(err);
           return false;
         }
-        //console.log('session validity: ' + session.isValid());
         initConfigCredentials(session.idToken.jwtToken);
         return callback(null, session.isValid());
       });

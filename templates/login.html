@@ -1,31 +1,25 @@
 <ion-view title="Login" hide-nav-bar="true" hide-back-button="true" ng-init="setupPage()" id="page8">
-  <ion-content padding="true" class="manual-ios-statusbar-padding">
-   <div class="error" ng-show="error.message" style="text-align:center;" class="show-list-numbers-and-dots">
-		<p style="color:#FF0000;">
-          <b>{{ error.message }}</b>
-	</div>
-    <div class="spacer" style="width: 300px; height: 12%;"></div> 
-    <div>
-      <img src="images/tklogo.png" style="display: block; width: 100%; height: auto; margin-left: auto; margin-right: auto;">
-    </div>
-    <div class="spacer" style="width: 300px; height: 12%;"></div>
-
-    <form id="login-form1" class="list" ng-submit="signIn(login)" >
-      <ion-list id="login-list1">
-        <label class="item item-input" id="login-input1">
-          <span class="input-label">Email</span>
-          <input type="email" placeholder="" ng-model="user.email">
-        </label>
-        <label class="item item-input" id="login-input2">
-          <span class="input-label">Password</span>
-          <input type="password" placeholder="" ng-model="user.password">
-        </label>
-        <!--<ion-checkbox id="login-checkbox1">Remember my Login</ion-checkbox>-->
-      </ion-list>
-      <button type=submit id="login-button2" class="button button-positive button-block" >Login</button>
-    </form>
-	  <a ui-sref="createANewAccount()" id="login-button3" class="button button-positive button-block button-outline">Create a New Account</a>
-      <button ui-sref="accountConfirmation()" id="login-button19" class="button button-positive button-small button-block button-clear">Confirm an Account</button>
-    
-  </ion-content>
+	<ion-content padding="true" class="manual-ios-statusbar-padding">
+		<div class="spacer" style="width: 300px; height: 12%;"></div> 
+		<div>
+			<img src="images/tklogo.png" style="display: block; width: 100%; height: auto; margin-left: auto; margin-right: auto;">
+		</div>
+		<div class="spacer" style="width: 300px; height: 12%;"></div>
+		<div class="error" ng-show="error.message" style="text-align:center;" class="show-list-numbers-and-dots">
+			<p style="color:#FF0000;"> <b>{{ error.message }}</b> </p>
+		</div>
+		<form id="login-form1" class="list" ng-submit="signIn(login)" >
+			<ion-list id="login-list1">
+				<label class="item item-input" id="login-input1">
+					<input type="email" placeholder="Email" ng-model="user.email">
+				</label>
+				<label class="item item-input" id="login-input2">
+					<input type="password" placeholder="Password" ng-model="user.password">
+				</label>
+			</ion-list>
+			<button type=submit id="login-button2" class="button button-positive button-block" >Login</button>
+		</form>
+		<a ui-sref="createANewAccount()" id="login-button3" class="button button-positive button-block button-outline">Create a New Account</a>
+		<button ui-sref="accountConfirmation()" id="login-button19" class="button button-positive button-small button-block button-clear">Confirm an Account</button>
+	</ion-content>
 </ion-view>

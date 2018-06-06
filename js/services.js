@@ -3,6 +3,7 @@ angular.module('app.services', ['ngStorage'])
 .factory ('StorageService', function ($localStorage) {
 
 $localStorage = $localStorage.$default({
+	saveLogin: false,
 	child: {},
 	children: {},
 	mission: {},
@@ -17,9 +18,10 @@ $localStorage = $localStorage.$default({
 });
 	
 var	_getAll = function () 	   { return $localStorage; }
-var _add 	= function (key,thing) { $localStorage[key] = thing; console.log($localStorage) }
+var _add 	= function (key,thing) { $localStorage[key] = thing;}
 var _remove = function (thing) { $localStorage.things.splice($localStorage.things.indexOf(thing), 1) }
 var _reset = function () {
+	$localStorage.saveLogin= 			false;
 	$localStorage.mission=				{},
 	$localStorage.missionType=			{},
 	$localStorage.missions= 			[],
